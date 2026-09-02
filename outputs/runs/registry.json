@@ -1,0 +1,32 @@
+{
+  "runs": [
+    {
+      "run_id": "20260902T015532Z_efficientnet-v2-b0",
+      "name": "efficientnet-v2-b0",
+      "architecture": "efficientnet_v2_b0",
+      "num_classes": 79,
+      "epochs_ran": 41,
+      "training_minutes": 183.6,
+      "test_accuracy": 0.8142580019398642,
+      "test_macro_f1": 0.8020458880101548,
+      "validate_accuracy": 0.8169556840077071,
+      "validate_macro_f1": 0.8136999707189353,
+      "notes": "Transfer learning: EfficientNetV2B0 congelado + la misma cabeza del baseline",
+      "created_at": "2026-09-02T01:55:33.750505+00:00"
+    },
+    {
+      "run_id": "20260902T005147Z_mobilenet-v3-small",
+      "name": "mobilenet-v3-small",
+      "architecture": "mobilenet_v3_small",
+      "num_classes": 79,
+      "epochs_ran": 50,
+      "training_minutes": 60.9,
+      "test_accuracy": 0.7764306498545102,
+      "test_macro_f1": 0.7691478237437108,
+      "validate_accuracy": 0.7726396917148363,
+      "validate_macro_f1": 0.7702874997786753,
+      "notes": "Baseline: reproduce la arquitectura/hiperparametros de InsectsMobileNet",
+      "created_at": "2026-09-02T00:51:50.830421+00:00"
+    }
+  ]
+}

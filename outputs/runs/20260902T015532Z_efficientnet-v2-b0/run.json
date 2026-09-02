@@ -1,0 +1,29 @@
+{
+  "run_id": "20260902T015532Z_efficientnet-v2-b0",
+  "name": "efficientnet-v2-b0",
+  "architecture": "efficientnet_v2_b0",
+  "notes": "Transfer learning: EfficientNetV2B0 congelado + la misma cabeza del baseline",
+  "num_classes": 79,
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 41,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "efficientnet_v2_b0/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-02T01:55:33.750505+00:00",
+  "finished_at": "2026-09-02T04:59:11.842722+00:00",
+  "training_minutes": 183.6
+}

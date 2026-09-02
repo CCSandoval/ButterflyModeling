@@ -6,6 +6,7 @@ if "ipykernel" not in sys.modules:
     matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 
 SURFACE = "#fcfcfb"
@@ -62,3 +63,23 @@ def limpiarEje(ax):
     for spine in ax.spines.values():
         spine.set_visible(False)
     return ax
+
+
+def plotConfusionMatrix(metrica, titulo):
+    """Matriz de confusión normalizada por fila."""
+    applyStyle()
+    matriz = np.array(metrica["confusion_matrix"], dtype=float)
+    porFila = matriz.sum(axis=1, keepdims=True)
+    normal = np.divide(matriz, porFila, out=np.zeros_like(matriz), where=porFila > 0)
+    n = len(metrica["class_names"])
+
+    fig, ax = plt.subplots(figsize=(8, 7))
+    ax.grid(False)
+    imagen = ax.imshow(normal, cmap=CMAP_AZUL, vmin=0, vmax=1, interpolation="nearest")
+    ax.set_xticks([0, n - 1], ["1", str(n)])
+    ax.set_yticks([0, n - 1], ["1", str(n)])
+    ax.set(xlabel="Predicción", ylabel="Especie real", title=titulo)
+    barra = fig.colorbar(imagen, ax=ax, fraction=0.046, pad=0.04)
+    barra.outline.set_visible(False)
+    fig.tight_layout()
+    return fig

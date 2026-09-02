@@ -1,0 +1,29 @@
+{
+  "run_id": "20260902T005147Z_mobilenet-v3-small",
+  "name": "mobilenet-v3-small",
+  "architecture": "mobilenet_v3_small",
+  "notes": "Baseline: reproduce la arquitectura/hiperparametros de InsectsMobileNet",
+  "num_classes": 79,
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 50,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "mobilenet_v3_small/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-02T00:51:50.830421+00:00",
+  "finished_at": "2026-09-02T01:52:46.497054+00:00",
+  "training_minutes": 60.9
+}

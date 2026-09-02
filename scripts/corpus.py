@@ -2,6 +2,9 @@ import json
 import shutil
 from pathlib import Path
 
+import numpy as np
+from sklearn.utils.class_weight import compute_class_weight
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 CORPUS_CONFIG_PATH = ROOT_DIR / "corpus.json"
 DATASET_DIR = ROOT_DIR / "dataset"
@@ -22,6 +25,16 @@ def loadSplitManifest():
 
 def classNames():
     return sorted(loadSplitManifest()["reparto"].keys())
+
+
+def classWeights():
+    """Peso balanceado por clase"""
+    reparto = loadSplitManifest()["reparto"]
+    nombres = classNames()
+    conteos = [len(reparto[n]["train"]) for n in nombres]
+    y = np.repeat(np.arange(len(nombres)), conteos)
+    pesos = compute_class_weight("balanced", classes=np.arange(len(nombres)), y=y)
+    return {i: float(p) for i, p in enumerate(pesos)}
 
 
 def materializar():
