@@ -1,0 +1,6 @@
+{
+  "dataset_dir": "../ButterflyDataset/Dataset",
+  "split_file": "../ButterflyDataset/splits/procesado_semilla42.json",
+  "semilla": 42,
+  "num_clases": 79
+}
