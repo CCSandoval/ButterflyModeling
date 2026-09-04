@@ -3,3 +3,4 @@ dataset-eval
 .ipynb_checkpoints
 __pycache__
 .vscode
+CLAUDE*

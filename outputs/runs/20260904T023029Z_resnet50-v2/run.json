@@ -1,0 +1,29 @@
+{
+  "run_id": "20260904T023029Z_resnet50-v2",
+  "name": "resnet50-v2",
+  "architecture": "resnet50_v2",
+  "notes": "Transfer learning: ResNet50V2 congelado + la misma cabeza del baseline",
+  "num_classes": 79,
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 50,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "resnet50_v2/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-04T02:30:30.519944+00:00",
+  "finished_at": "2026-09-04T10:00:15.437635+00:00",
+  "training_minutes": 449.7
+}

@@ -1,6 +1,20 @@
 {
   "runs": [
     {
+      "run_id": "20260904T023029Z_resnet50-v2",
+      "name": "resnet50-v2",
+      "architecture": "resnet50_v2",
+      "num_classes": 79,
+      "epochs_ran": 50,
+      "training_minutes": 449.7,
+      "test_accuracy": 0.7929194956353055,
+      "test_macro_f1": 0.7871197202215588,
+      "validate_accuracy": 0.7947976878612717,
+      "validate_macro_f1": 0.7942635501498726,
+      "notes": "Transfer learning: ResNet50V2 congelado + la misma cabeza del baseline",
+      "created_at": "2026-09-04T02:30:30.519944+00:00"
+    },
+    {
       "run_id": "20260902T015532Z_efficientnet-v2-b0",
       "name": "efficientnet-v2-b0",
       "architecture": "efficientnet_v2_b0",
