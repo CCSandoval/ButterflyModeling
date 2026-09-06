@@ -1,14 +1,14 @@
 from tensorflow.keras import Model, layers
 from tensorflow.keras.applications import (
-    ConvNeXtTiny,
     DenseNet121,
     EfficientNetV2B0,
+    InceptionV3,
     MobileNetV3Small,
     ResNet50V2,
 )
-from tensorflow.keras.applications.convnext import preprocess_input as convnextPreprocess
 from tensorflow.keras.applications.densenet import preprocess_input as densenetPreprocess
 from tensorflow.keras.applications.efficientnet_v2 import preprocess_input as efficientnetPreprocess
+from tensorflow.keras.applications.inception_v3 import preprocess_input as inceptionPreprocess
 from tensorflow.keras.applications.mobilenet_v3 import preprocess_input as mobilenetPreprocess
 from tensorflow.keras.applications.resnet_v2 import preprocess_input as resnetPreprocess
 
@@ -18,7 +18,7 @@ ARCHITECTURES = {
     "efficientnet_v2_b0": (EfficientNetV2B0, efficientnetPreprocess, "top_activation"),
     "resnet50_v2": (ResNet50V2, resnetPreprocess, "post_relu"),
     "densenet121": (DenseNet121, densenetPreprocess, "relu"),
-    "convnext_tiny": (ConvNeXtTiny, convnextPreprocess, "convnext_tiny_stage_3_block_2_identity"),
+    "inception_v3": (InceptionV3, inceptionPreprocess, "mixed10"),
 }
 
 

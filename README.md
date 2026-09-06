@@ -5,7 +5,7 @@ especies de mariposas del Tolima. Usa el dataset ya dividido/preprocesado por
 [`ButterflyDataset`](../ButterflyDataset) (repo hermano).
 
 Compara 5 arquitecturas con transfer learning (MobileNetV3Small,
-EfficientNetV2B0, ResNet50V2, DenseNet121, ConvNeXtTiny) contra 3 modelos
+EfficientNetV2B0, ResNet50V2, DenseNet121, InceptionV3) contra 3 modelos
 obtenidos por destilación de conocimiento, todos sobre el mismo split
 (semilla 42, 79 clases).
 
