@@ -1,0 +1,30 @@
+{
+  "run_id": "20260906T151143Z_mobilenet-v2",
+  "name": "mobilenet-v2",
+  "architecture": "mobilenet_v2",
+  "role": "estudiante",
+  "notes": "Candidato a estudiante: mobilenet-v2 + cabeza comun",
+  "num_classes": 79,
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 40,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "mobilenet_v2/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-06T15:11:43.901118+00:00",
+  "finished_at": "2026-09-06T16:54:27.859131+00:00",
+  "training_minutes": 102.7
+}
