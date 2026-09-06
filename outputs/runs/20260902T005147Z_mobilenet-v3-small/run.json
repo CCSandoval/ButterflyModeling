@@ -25,5 +25,6 @@
   },
   "started_at": "2026-09-02T00:51:50.830421+00:00",
   "finished_at": "2026-09-02T01:52:46.497054+00:00",
-  "training_minutes": 60.9
+  "training_minutes": 60.9,
+  "role": "estudiante"
 }

@@ -25,5 +25,6 @@
   },
   "started_at": "2026-09-04T02:30:30.519944+00:00",
   "finished_at": "2026-09-04T10:00:15.437635+00:00",
-  "training_minutes": 449.7
+  "training_minutes": 449.7,
+  "role": "docente"
 }

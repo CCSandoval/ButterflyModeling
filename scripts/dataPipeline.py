@@ -30,9 +30,13 @@ def loadSplit(directory, img_size, batch_size, shuffle=True):
 
 def preparar(ds, preprocess_fn, augmenter=None):
     """Aplica augmentation (solo entrenamiento) y el preprocess_input de la
-    arquitectura. Un solo tf.data.Dataset por split: el mismo batch aumentado
-    se reusa para teacher y student en destilación, así ambos ven la misma vista."""
+    arquitectura."""
     if augmenter is not None:
         ds = ds.map(lambda x, y: (augmenter(x, training=True), y), num_parallel_calls=AUTOTUNE)
     ds = ds.map(lambda x, y: (preprocess_fn(x), y), num_parallel_calls=AUTOTUNE)
+    return ds.prefetch(AUTOTUNE)
+
+
+def prepararCrudo(ds, augmenter):
+    ds = ds.map(lambda x, y: (augmenter(x, training=True), y), num_parallel_calls=AUTOTUNE)
     return ds.prefetch(AUTOTUNE)

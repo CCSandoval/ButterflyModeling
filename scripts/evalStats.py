@@ -1,5 +1,20 @@
+import time
+
 import numpy as np
+import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
+
+
+def medirLatencia(model, repeticiones=30):
+    """Milisegundos por imagen con lote de 1"""
+    alto, ancho = model.input_shape[1:3]
+    entrada = tf.random.uniform((1, alto, ancho, 3), 0, 255)
+
+    model(entrada, training=False)
+    inicio = time.time()
+    for _ in range(repeticiones):
+        model(entrada, training=False)
+    return (time.time() - inicio) / repeticiones * 1000
 
 
 def evaluar(model, ds, classNames):

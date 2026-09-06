@@ -2,5 +2,7 @@
   "run_id": "20260902T015532Z_efficientnet-v2-b0",
   "architecture": "efficientnet_v2_b0",
   "test_accuracy": 0.8142580019398642,
-  "test_macro_f1": 0.8020458880101548
+  "test_macro_f1": 0.8020458880101548,
+  "latencia_ms": 122.6,
+  "parametros_M": 6.75
 }
