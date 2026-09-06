@@ -1,0 +1,29 @@
+{
+  "run_id": "20260906T040431Z_inception-v3",
+  "name": "inception-v3",
+  "architecture": "inception_v3",
+  "notes": "Transfer learning: InceptionV3 congelado + la misma cabeza del baseline",
+  "num_classes": 79,
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 50,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "inception_v3/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-06T04:04:32.159849+00:00",
+  "finished_at": "2026-09-06T10:57:15.835146+00:00",
+  "training_minutes": 412.7
+}
