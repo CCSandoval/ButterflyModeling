@@ -1,0 +1,30 @@
+{
+  "run_id": "20260908T012953Z_efficientnet-v2-s",
+  "name": "efficientnet-v2-s",
+  "architecture": "efficientnet_v2_s",
+  "role": "docente",
+  "notes": "Candidato a docente: EfficientNetV2S congelado + cabeza comun",
+  "num_classes": 79,
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 50,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "efficientnet_v2_s/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-08T01:29:55.164827+00:00",
+  "finished_at": "2026-09-08T09:47:57.648255+00:00",
+  "training_minutes": 498.0
+}
