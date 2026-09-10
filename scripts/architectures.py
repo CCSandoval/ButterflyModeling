@@ -1,3 +1,4 @@
+import numpy as np
 from tensorflow.keras import Model, layers
 from tensorflow.keras.applications import (
     DenseNet121,
@@ -62,6 +63,7 @@ ESTUDIANTES = [
 ]
 
 IMG_SIZE = (320, 320)
+CABEZA_POOL = "cabeza_pool"
 
 
 def buildModel(name, numClasses):
@@ -73,7 +75,7 @@ def buildModel(name, numClasses):
     base.trainable = False
 
     x = base.output
-    x = layers.GlobalAveragePooling2D()(x)
+    x = layers.GlobalAveragePooling2D(name=CABEZA_POOL)(x)
     x = layers.Dense(512, activation="relu")(x)
     x = layers.BatchNormalization()(x)
     x = layers.Dropout(0.30)(x)
@@ -86,6 +88,27 @@ def buildModel(name, numClasses):
     output = layers.Dense(numClasses, activation="softmax")(x)
 
     return Model(inputs=base.input, outputs=output)
+
+
+def descongelarCola(modelo, fraccion):
+    """Deja entrenable la última `fraccion` de capas del backbone.
+
+    Las BatchNormalization quedan congeladas a propósito: con lotes de 32 sus
+    estadísticas de ImageNet se degradan más de lo que aporta ajustarlas.
+    """
+    corte = [l.name for l in modelo.layers].index(CABEZA_POOL)
+    backbone = modelo.layers[:corte]
+    desde = int(len(backbone) * (1 - fraccion))
+
+    for capa in backbone[desde:]:
+        if not isinstance(capa, layers.BatchNormalization):
+            capa.trainable = True
+
+    return {
+        "capas_backbone": len(backbone),
+        "capas_descongeladas": sum(1 for c in backbone[desde:] if c.trainable),
+        "parametros_entrenables": int(sum(np.prod(w.shape) for w in modelo.trainable_weights)),
+    }
 
 
 def preprocessFn(name):
