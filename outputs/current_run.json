@@ -1,5 +1,5 @@
 {
-  "run_id": "20260907T014314Z_efficientnet-v2-b0",
+  "run_id": "20260912T001248Z_efficientnet-v2-b0",
   "name": "efficientnet-v2-b0",
   "architecture": "efficientnet_v2_b0",
   "num_classes": 79,
@@ -84,5 +84,5 @@
     "urbanus_teleus",
     "zizula_cyna"
   ],
-  "promoted_at": "2026-09-08T11:40:43.039776+00:00"
+  "promoted_at": "2026-09-12T12:18:30.536807+00:00"
 }
