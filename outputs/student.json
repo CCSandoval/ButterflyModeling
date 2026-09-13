@@ -3,7 +3,7 @@
   "architecture": "mobilenet_v3_small",
   "test_accuracy": 0.8462657613967022,
   "test_macro_f1": 0.8426300455935061,
-  "latencia_ms": 63.0,
+  "latencia_ms": 49.2,
   "parametros_M": 1.41,
-  "margen_f1": 0.05
+  "margen_f1": 0.1
 }

@@ -4,3 +4,4 @@ dataset-eval
 __pycache__
 .vscode
 CLAUDE*
+.DS_Store
