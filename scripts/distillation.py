@@ -88,3 +88,53 @@ class Destilador(tf.keras.Model):
         )
         self.metricaAccuracy.update_state(y, probsEstudiante)
         return {m.name: m.result() for m in self.metrics}
+
+
+class DestiladorFeatures(Destilador):
+    """Suma al KD de respuesta un hint loss entre mapas de features (FitNets)."""
+
+    def __init__(self, docente, estudiante, preprocessDocente, preprocessEstudiante,
+                 temperatura, alfa, capaDocente, capaEstudiante, beta):
+        super().__init__(docente, estudiante, preprocessDocente, preprocessEstudiante,
+                         temperatura, alfa)
+        self.beta = beta
+
+        # una sola pasada por modelo devuelve features y predicción
+        self.docenteDual = tf.keras.Model(
+            docente.input, [docente.get_layer(capaDocente).output, docente.output])
+        self.docenteDual.trainable = False
+        self.estudianteDual = tf.keras.Model(
+            estudiante.input, [estudiante.get_layer(capaEstudiante).output, estudiante.output])
+
+        self.proyeccion = construirProyeccion(self.docenteDual.output[0].shape[-1])
+        self.metricaFeatures = tf.keras.metrics.Mean(name="loss_features")
+
+    @property
+    def metrics(self):
+        return [self.metricaPerdida, self.metricaAccuracy, self.metricaFeatures]
+
+    def train_step(self, data):
+        x, y, pesos = tf.keras.utils.unpack_x_y_sample_weight(data)
+        featuresDocente, probsDocente = self.docenteDual(
+            self.preprocessDocente(x), training=False)
+
+        with tf.GradientTape() as cinta:
+            featuresEstudiante, probsEstudiante = self.estudianteDual(
+                self.preprocessEstudiante(x), training=True)
+            respuesta = perdidaRespuesta(
+                probsDocente, probsEstudiante, y, self.temperatura, self.alfa, pesos)
+            features = perdidaFeatures(featuresDocente, featuresEstudiante, self.proyeccion)
+            perdida = respuesta + self.beta * features
+
+        entrenables = self.estudiante.trainable_variables + self.proyeccion.trainable_variables
+        self.optimizer.apply_gradients(zip(cinta.gradient(perdida, entrenables), entrenables))
+
+        self.metricaPerdida.update_state(perdida)
+        self.metricaAccuracy.update_state(y, probsEstudiante)
+        self.metricaFeatures.update_state(features)
+        return {m.name: m.result() for m in self.metrics}
+
+    def test_step(self, data):
+        resultado = super().test_step(data)
+        self.metricaFeatures.update_state(0.0)   # no aplica en validación
+        return resultado
