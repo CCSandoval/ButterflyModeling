@@ -55,6 +55,17 @@ class Destilador(tf.keras.Model):
         self.metricaPerdida = tf.keras.metrics.Mean(name="loss")
         self.metricaAccuracy = tf.keras.metrics.CategoricalAccuracy(name="accuracy")
 
+        # solo la clase concreta construye: una subclase todavía tiene que
+        # crear sus propios submodelos, y Keras prohíbe añadirlos después
+        if type(self) is Destilador:
+            self.construir()
+
+    def construir(self):
+        """Un modelo subclaseado no queda construido hasta que se lo llama, y
+        BackupAndRestore lo exige construido antes de `fit()`. Se llama al
+        final del `__init__` de cada clase concreta."""
+        self(tf.zeros((1, *self.estudiante.input_shape[1:])))
+
     @property
     def metrics(self):
         return [self.metricaPerdida, self.metricaAccuracy]
@@ -107,7 +118,12 @@ class DestiladorFeatures(Destilador):
             estudiante.input, [estudiante.get_layer(capaEstudiante).output, estudiante.output])
 
         self.proyeccion = construirProyeccion(self.docenteDual.output[0].shape[-1])
+        # construirla aquí y no dejar que se construya sola en el primer
+        # train_step: ahí ya está trazado y no se pueden crear variables
+        self.proyeccion.build(self.estudianteDual.output[0].shape)
         self.metricaFeatures = tf.keras.metrics.Mean(name="loss_features")
+
+        self.construir()
 
     @property
     def metrics(self):

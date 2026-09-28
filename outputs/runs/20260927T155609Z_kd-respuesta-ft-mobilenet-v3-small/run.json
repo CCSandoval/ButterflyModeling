@@ -1,0 +1,38 @@
+{
+  "run_id": "20260927T155609Z_kd-respuesta-ft-mobilenet-v3-small",
+  "name": "kd-respuesta-ft-mobilenet-v3-small",
+  "architecture": "mobilenet_v3_small",
+  "role": "destilado",
+  "notes": "KD de respuesta con la cola del backbone del estudiante descongelada",
+  "num_classes": 79,
+  "distillation": {
+    "tipo": "respuesta",
+    "teacher_run_id": "20260913T005433Z_efficientnet-v2-s",
+    "teacher_architecture": "efficientnet_v2_s",
+    "temperatura": 4.0,
+    "finetuning": 0.3,
+    "alfa": 0.7
+  },
+  "hyperparameters": {
+    "img_size": [
+      320,
+      320
+    ],
+    "batch_size": 32,
+    "epochs_budget": 50,
+    "epochs_ran": 50,
+    "learning_rate": 0.0001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "mobilenet_v3_small/imagenet (congelado)"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "tensorflow": "2.19.1",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "started_at": "2026-09-27T15:56:11.898607+00:00",
+  "finished_at": "2026-09-27T23:41:49.745978+00:00",
+  "training_minutes": 465.6
+}
