@@ -25,10 +25,30 @@ def construirProyeccion(canalesSalida):
 
 
 def perdidaFeatures(featuresDocente, featuresEstudiante, proyeccion):
+    """
+    Hint loss con las features normalizadas por posición.
+    Sin normalizar, el Mean Squared Error crece por la diferencia de escala entre arquitecturas
+    """
     proyectada = proyeccion(featuresEstudiante)
     if proyectada.shape[1:3] != featuresDocente.shape[1:3]:
         proyectada = tf.image.resize(proyectada, featuresDocente.shape[1:3])
-    return tf.reduce_mean(tf.square(proyectada - featuresDocente))
+    return tf.reduce_mean(tf.square(tf.math.l2_normalize(proyectada, axis=-1)
+                                    - tf.math.l2_normalize(featuresDocente, axis=-1)))
+
+
+def mapaAtencion(features):
+    """Suma de cuadrados sobre canales, aplanada y normalizada."""
+    mapa = tf.reduce_sum(tf.square(features), axis=-1)
+    return tf.math.l2_normalize(tf.reshape(mapa, [tf.shape(mapa)[0], -1]), axis=1)
+
+
+def perdidaAtencion(featuresDocente, featuresEstudiante):
+    """Attention transfer: colapsa los canales, así que no necesita proyección
+    y no importa la escala"""
+    if featuresEstudiante.shape[1:3] != featuresDocente.shape[1:3]:
+        featuresEstudiante = tf.image.resize(featuresEstudiante, featuresDocente.shape[1:3])
+    return tf.reduce_mean(tf.square(mapaAtencion(featuresDocente)
+                                    - mapaAtencion(featuresEstudiante)))
 
 
 class Destilador(tf.keras.Model):
@@ -102,32 +122,43 @@ class Destilador(tf.keras.Model):
 
 
 class DestiladorFeatures(Destilador):
-    """Suma al KD de respuesta un hint loss entre mapas de features (FitNets)."""
+    """
+    KD de respuesta más hint loss entre features normalizadas.
+    Toma la capa previa al pool de cada modelo, que es post-activación en toda arquitectura
+    """
+
+    NOMBRE_AUXILIAR = "loss_features"
+    USA_PROYECCION = True
 
     def __init__(self, docente, estudiante, preprocessDocente, preprocessEstudiante,
-                 temperatura, alfa, capaDocente, capaEstudiante, beta):
+                 temperatura, alfa, beta):
         super().__init__(docente, estudiante, preprocessDocente, preprocessEstudiante,
                          temperatura, alfa)
-        self.beta = beta
+        from .architectures import capaFeatures
 
-        # una sola pasada por modelo devuelve features y predicción
-        self.docenteDual = tf.keras.Model(
-            docente.input, [docente.get_layer(capaDocente).output, docente.output])
+        self.beta = beta
+        self.docenteDual = tf.keras.Model(docente.input, [capaFeatures(docente), docente.output])
         self.docenteDual.trainable = False
         self.estudianteDual = tf.keras.Model(
-            estudiante.input, [estudiante.get_layer(capaEstudiante).output, estudiante.output])
+            estudiante.input, [capaFeatures(estudiante), estudiante.output])
 
-        self.proyeccion = construirProyeccion(self.docenteDual.output[0].shape[-1])
-        # construirla aquí y no dejar que se construya sola en el primer
-        # train_step: ahí ya está trazado y no se pueden crear variables
-        self.proyeccion.build(self.estudianteDual.output[0].shape)
-        self.metricaFeatures = tf.keras.metrics.Mean(name="loss_features")
+        self.proyeccion = None
+        if self.USA_PROYECCION:
+            self.proyeccion = construirProyeccion(self.docenteDual.output[0].shape[-1])
+            self.proyeccion.build(self.estudianteDual.output[0].shape)
+        self.metricaAuxiliar = tf.keras.metrics.Mean(name=self.NOMBRE_AUXILIAR)
 
         self.construir()
 
     @property
     def metrics(self):
-        return [self.metricaPerdida, self.metricaAccuracy, self.metricaFeatures]
+        return [self.metricaPerdida, self.metricaAccuracy, self.metricaAuxiliar]
+
+    def perdidaAuxiliar(self, featuresDocente, featuresEstudiante):
+        return perdidaFeatures(featuresDocente, featuresEstudiante, self.proyeccion)
+
+    def entrenables(self):
+        return self.estudiante.trainable_variables + self.proyeccion.trainable_variables
 
     def train_step(self, data):
         x, y, pesos = tf.keras.utils.unpack_x_y_sample_weight(data)
@@ -139,18 +170,33 @@ class DestiladorFeatures(Destilador):
                 self.preprocessEstudiante(x), training=True)
             respuesta = perdidaRespuesta(
                 probsDocente, probsEstudiante, y, self.temperatura, self.alfa, pesos)
-            features = perdidaFeatures(featuresDocente, featuresEstudiante, self.proyeccion)
-            perdida = respuesta + self.beta * features
+            auxiliar = self.perdidaAuxiliar(featuresDocente, featuresEstudiante)
+            perdida = respuesta + self.beta * auxiliar
 
-        entrenables = self.estudiante.trainable_variables + self.proyeccion.trainable_variables
+        entrenables = self.entrenables()
         self.optimizer.apply_gradients(zip(cinta.gradient(perdida, entrenables), entrenables))
 
         self.metricaPerdida.update_state(perdida)
         self.metricaAccuracy.update_state(y, probsEstudiante)
-        self.metricaFeatures.update_state(features)
+        self.metricaAuxiliar.update_state(auxiliar)
         return {m.name: m.result() for m in self.metrics}
 
     def test_step(self, data):
         resultado = super().test_step(data)
-        self.metricaFeatures.update_state(0.0)   # no aplica en validación
+        self.metricaAuxiliar.update_state(0.0)
         return resultado
+
+
+class DestiladorAtencion(DestiladorFeatures):
+    """
+    KD de respuesta más attention transfer.
+    """
+
+    NOMBRE_AUXILIAR = "loss_atencion"
+    USA_PROYECCION = False
+
+    def perdidaAuxiliar(self, featuresDocente, featuresEstudiante):
+        return perdidaAtencion(featuresDocente, featuresEstudiante)
+
+    def entrenables(self):
+        return self.estudiante.trainable_variables

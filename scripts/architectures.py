@@ -111,6 +111,11 @@ def descongelarCola(modelo, fraccion):
     }
 
 
+def capaFeatures(modelo):
+    """Última salida del backbone"""
+    return modelo.get_layer(CABEZA_POOL).input
+
+
 def preprocessFn(name):
     return ARCHITECTURES[name][1]
 
