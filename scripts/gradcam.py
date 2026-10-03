@@ -42,6 +42,48 @@ def computeGradcam(model, img: Image.Image, classIndex: int, convLayer: str, pre
     return heatmap
 
 
+def cajaEnRecorte(fila) -> list:
+    """Caja de la mariposa en coordenadas normalizadas del recorte cuadrado.
+
+    `auditoria.csv` guarda la detección de YOLO-World en el espacio de la
+    imagen original y el recorte como origen + lado, así que hay que trasladar
+    y escalar. Se recorta a [0,1] porque la caja puede salirse del cuadrado.
+    """
+    lado = fila["ladoOriginal"]
+    caja = [
+        (fila["x1"] - fila["cuadradoX"]) / lado,
+        (fila["y1"] - fila["cuadradoY"]) / lado,
+        (fila["x2"] - fila["cuadradoX"]) / lado,
+        (fila["y2"] - fila["cuadradoY"]) / lado,
+    ]
+    return [min(max(v, 0.0), 1.0) for v in caja]
+
+
+def areaCaja(caja) -> float:
+    """Fracción del recorte que ocupa la mariposa: es la línea base contra la
+    que se compara la atención. Una atención repartida al azar daría esto."""
+    x1, y1, x2, y2 = caja
+    return max(x2 - x1, 0.0) * max(y2 - y1, 0.0)
+
+
+def fraccionDentro(heatmap: np.ndarray, caja) -> float:
+    """Fracción de la activación de Grad-CAM que cae dentro de la caja.
+
+    Comparar contra `areaCaja`: si coinciden, el modelo no está mirando la
+    mariposa más que el fondo.
+    """
+    alto, ancho = heatmap.shape
+    x1, y1, x2, y2 = caja
+    i0, i1 = int(round(y1 * alto)), int(round(y2 * alto))
+    j0, j1 = int(round(x1 * ancho)), int(round(x2 * ancho))
+    i1, j1 = max(i1, i0 + 1), max(j1, j0 + 1)
+
+    total = heatmap.sum()
+    if total <= 0:
+        return float("nan")
+    return float(heatmap[i0:i1, j0:j1].sum() / total)
+
+
 def overlayHeatmap(img: Image.Image, heatmap: np.ndarray) -> Image.Image:
     alpha = 0.4
     imgRgb = np.asarray(img.convert("RGB"))
