@@ -16,7 +16,8 @@
       "validate_accuracy": 0.8005780346820809,
       "validate_macro_f1": 0.7937251938118504,
       "notes": "KD de respuesta + hint loss entre features, backbone descongelado",
-      "created_at": "2026-09-28T00:06:57.282876+00:00"
+      "created_at": "2026-09-28T00:06:57.282876+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260927T155609Z_kd-respuesta-ft-mobilenet-v3-small",
@@ -34,7 +35,8 @@
       "validate_accuracy": 0.8294797687861272,
       "validate_macro_f1": 0.8237554499959377,
       "notes": "KD de respuesta con la cola del backbone del estudiante descongelada",
-      "created_at": "2026-09-27T15:56:11.898607+00:00"
+      "created_at": "2026-09-27T15:56:11.898607+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260916T025430Z_kd-respuesta-mobilenet-v3-small",
@@ -52,7 +54,8 @@
       "validate_accuracy": 0.7408477842003853,
       "validate_macro_f1": 0.733129503447722,
       "notes": "KD de respuesta (KL + CE) del docente promovido hacia el estudiante elegido",
-      "created_at": "2026-09-16T02:54:32.433770+00:00"
+      "created_at": "2026-09-16T02:54:32.433770+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260915T015250Z_inception-v3",
@@ -68,7 +71,8 @@
       "validate_accuracy": 0.8998073217726397,
       "validate_macro_f1": 0.8985805977496804,
       "notes": "Candidato a docente: InceptionV3 + cabeza comun",
-      "created_at": "2026-09-15T01:52:51.716367+00:00"
+      "created_at": "2026-09-15T01:52:51.716367+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260914T021232Z_densenet121",
@@ -84,7 +88,8 @@
       "validate_accuracy": 0.894990366088632,
       "validate_macro_f1": 0.8963670061804154,
       "notes": "Candidato a docente: DenseNet121 + cabeza comun",
-      "created_at": "2026-09-14T02:12:33.596260+00:00"
+      "created_at": "2026-09-14T02:12:33.596260+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260913T104733Z_resnet50-v2",
@@ -100,7 +105,8 @@
       "validate_accuracy": 0.09248554913294797,
       "validate_macro_f1": 0.04751824171474266,
       "notes": "Candidato a docente: ResNet50V2 + cabeza comun",
-      "created_at": "2026-09-13T10:47:34.568788+00:00"
+      "created_at": "2026-09-13T10:47:34.568788+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260913T005433Z_efficientnet-v2-s",
@@ -116,7 +122,8 @@
       "validate_accuracy": 0.9219653179190751,
       "validate_macro_f1": 0.9214844188391212,
       "notes": "Candidato a docente: EfficientNetV2S + cabeza comun",
-      "created_at": "2026-09-13T00:54:34.911573+00:00"
+      "created_at": "2026-09-13T00:54:34.911573+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260912T180552Z_nasnet-mobile",
@@ -132,7 +139,8 @@
       "validate_accuracy": 0.8660886319845857,
       "validate_macro_f1": 0.8693747666852243,
       "notes": "Candidato a estudiante: nasnet-mobile + cabeza comun",
-      "created_at": "2026-09-12T18:05:54.528977+00:00"
+      "created_at": "2026-09-12T18:05:54.528977+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260912T131459Z_efficientnet-b0",
@@ -148,7 +156,8 @@
       "validate_accuracy": 0.9123314065510597,
       "validate_macro_f1": 0.9132612321318777,
       "notes": "Candidato a estudiante: efficientnet-b0 + cabeza comun",
-      "created_at": "2026-09-12T13:15:00.788989+00:00"
+      "created_at": "2026-09-12T13:15:00.788989+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260912T122558Z_mobilenet-v2",
@@ -164,7 +173,8 @@
       "validate_accuracy": 0.014450867052023121,
       "validate_macro_f1": 0.00036200842272930217,
       "notes": "Candidato a estudiante: mobilenet-v2 + cabeza comun",
-      "created_at": "2026-09-12T12:25:59.404668+00:00"
+      "created_at": "2026-09-12T12:25:59.404668+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260912T044001Z_mobilenet-v3-small",
@@ -180,7 +190,8 @@
       "validate_accuracy": 0.838150289017341,
       "validate_macro_f1": 0.8368924634129089,
       "notes": "Candidato a estudiante: MobileNetV3Small + cabeza comun",
-      "created_at": "2026-09-12T04:40:01.731431+00:00"
+      "created_at": "2026-09-12T04:40:01.731431+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260912T001248Z_efficientnet-v2-b0",
@@ -196,7 +207,8 @@
       "validate_accuracy": 0.9084778420038536,
       "validate_macro_f1": 0.9073831483276964,
       "notes": "Candidato a docente: EfficientNetV2B0 + cabeza comun",
-      "created_at": "2026-09-12T00:12:48.943187+00:00"
+      "created_at": "2026-09-12T00:12:48.943187+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260908T012953Z_efficientnet-v2-s",
@@ -211,7 +223,8 @@
       "validate_accuracy": 0.8092485549132948,
       "validate_macro_f1": 0.8061412893140226,
       "notes": "Candidato a docente: EfficientNetV2S congelado + cabeza comun",
-      "created_at": "2026-09-08T01:29:55.164827+00:00"
+      "created_at": "2026-09-08T01:29:55.164827+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260907T014314Z_efficientnet-v2-b0",
@@ -226,7 +239,8 @@
       "validate_accuracy": 0.8342967244701349,
       "validate_macro_f1": 0.8317990653381762,
       "notes": "Candidato a docente: EfficientNetV2B0 congelado + cabeza comun",
-      "created_at": "2026-09-07T01:43:15.730929+00:00"
+      "created_at": "2026-09-07T01:43:15.730929+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260906T211535Z_nasnet-mobile",
@@ -241,7 +255,8 @@
       "validate_accuracy": 0.6117533718689788,
       "validate_macro_f1": 0.5962147530355065,
       "notes": "Candidato a estudiante: nasnet-mobile + cabeza comun",
-      "created_at": "2026-09-06T21:15:37.235605+00:00"
+      "created_at": "2026-09-06T21:15:37.235605+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260906T173406Z_efficientnet-b0",
@@ -256,7 +271,8 @@
       "validate_accuracy": 0.838150289017341,
       "validate_macro_f1": 0.8352089819496198,
       "notes": "Candidato a estudiante: efficientnet-b0 + cabeza comun",
-      "created_at": "2026-09-06T17:34:07.608902+00:00"
+      "created_at": "2026-09-06T17:34:07.608902+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260906T151143Z_mobilenet-v2",
@@ -271,7 +287,8 @@
       "validate_accuracy": 0.6984585741811176,
       "validate_macro_f1": 0.6874461691286803,
       "notes": "Candidato a estudiante: mobilenet-v2 + cabeza comun",
-      "created_at": "2026-09-06T15:11:43.901118+00:00"
+      "created_at": "2026-09-06T15:11:43.901118+00:00",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260906T040431Z_inception-v3",
@@ -286,7 +303,8 @@
       "validate_macro_f1": 0.703992965274785,
       "notes": "Transfer learning: InceptionV3 congelado + la misma cabeza del baseline",
       "created_at": "2026-09-06T04:04:32.159849+00:00",
-      "role": "docente"
+      "role": "docente",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260905T020047Z_densenet121",
@@ -301,7 +319,8 @@
       "validate_macro_f1": 0.7701307730423316,
       "notes": "Transfer learning: DenseNet121 congelado + la misma cabeza del baseline",
       "created_at": "2026-09-05T02:00:48.431458+00:00",
-      "role": "docente"
+      "role": "docente",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260904T023029Z_resnet50-v2",
@@ -316,7 +335,8 @@
       "validate_macro_f1": 0.7942635501498726,
       "notes": "Transfer learning: ResNet50V2 congelado + la misma cabeza del baseline",
       "created_at": "2026-09-04T02:30:30.519944+00:00",
-      "role": "docente"
+      "role": "docente",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260902T015532Z_efficientnet-v2-b0",
@@ -331,7 +351,8 @@
       "validate_macro_f1": 0.8136999707189353,
       "notes": "Transfer learning: EfficientNetV2B0 congelado + la misma cabeza del baseline",
       "created_at": "2026-09-02T01:55:33.750505+00:00",
-      "role": "docente"
+      "role": "docente",
+      "dataset_version": "v1"
     },
     {
       "run_id": "20260902T005147Z_mobilenet-v3-small",
@@ -346,7 +367,8 @@
       "validate_macro_f1": 0.7702874997786753,
       "notes": "Baseline: reproduce la arquitectura/hiperparametros de InsectsMobileNet",
       "created_at": "2026-09-02T00:51:50.830421+00:00",
-      "role": "estudiante"
+      "role": "estudiante",
+      "dataset_version": "v1"
     }
   ]
 }

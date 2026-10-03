@@ -26,5 +26,6 @@
   },
   "started_at": "2026-09-06T17:34:07.608902+00:00",
   "finished_at": "2026-09-06T21:01:18.233270+00:00",
-  "training_minutes": 207.2
+  "training_minutes": 207.2,
+  "dataset_version": "v1"
 }
