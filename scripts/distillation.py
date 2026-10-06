@@ -62,12 +62,13 @@ class Destilador(tf.keras.Model):
     """
 
     def __init__(self, docente, estudiante, preprocessDocente, preprocessEstudiante,
-                 temperatura, alfa):
+                 temperatura, alfa, aumentador=None):
         super().__init__()
         self.docente = docente
         self.estudiante = estudiante
         self.preprocessDocente = preprocessDocente
         self.preprocessEstudiante = preprocessEstudiante
+        self.aumentador = aumentador
         self.temperatura = temperatura
         self.alfa = alfa
         self.docente.trainable = False
@@ -91,10 +92,17 @@ class Destilador(tf.keras.Model):
         return [self.metricaPerdida, self.metricaAccuracy]
 
     def call(self, x, training=False):
-        return self.estudiante(self.preprocessEstudiante(x), training=training)
+        return self.estudiante(self.preprocessEstudiante(tf.cast(x, tf.float32)),
+                               training=training)
+
+    def vistaAumentada(self, x):
+        """Una sola por lote: docente y estudiante deben ver la misma imagen."""
+        x = tf.cast(x, tf.float32)
+        return self.aumentador(x, training=True) if self.aumentador is not None else x
 
     def train_step(self, data):
         x, y, pesos = tf.keras.utils.unpack_x_y_sample_weight(data)
+        x = self.vistaAumentada(x)
         probsDocente = self.docente(self.preprocessDocente(x), training=False)
 
         with tf.GradientTape() as cinta:
@@ -112,7 +120,8 @@ class Destilador(tf.keras.Model):
 
     def test_step(self, data):
         x, y, _ = tf.keras.utils.unpack_x_y_sample_weight(data)
-        probsEstudiante = self.estudiante(self.preprocessEstudiante(x), training=False)
+        probsEstudiante = self.estudiante(
+            self.preprocessEstudiante(tf.cast(x, tf.float32)), training=False)
 
         self.metricaPerdida.update_state(
             tf.reduce_mean(tf.keras.losses.categorical_crossentropy(y, probsEstudiante))
@@ -131,9 +140,9 @@ class DestiladorFeatures(Destilador):
     USA_PROYECCION = True
 
     def __init__(self, docente, estudiante, preprocessDocente, preprocessEstudiante,
-                 temperatura, alfa, beta):
+                 temperatura, alfa, beta, aumentador=None):
         super().__init__(docente, estudiante, preprocessDocente, preprocessEstudiante,
-                         temperatura, alfa)
+                         temperatura, alfa, aumentador)
         from .architectures import capaFeatures
 
         self.beta = beta
@@ -162,6 +171,7 @@ class DestiladorFeatures(Destilador):
 
     def train_step(self, data):
         x, y, pesos = tf.keras.utils.unpack_x_y_sample_weight(data)
+        x = self.vistaAumentada(x)
         featuresDocente, probsDocente = self.docenteDual(
             self.preprocessDocente(x), training=False)
 

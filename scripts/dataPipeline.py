@@ -55,8 +55,3 @@ def preparar(ds, preprocess_fn, augmenter=None):
     ds = ds.map(lambda x, y: (preprocess_fn(x), y), num_parallel_calls=AUTOTUNE)
     return ds.prefetch(AUTOTUNE)
 
-
-def prepararCrudo(ds, augmenter):
-    ds = ds.map(lambda x, y: (tf.cast(x, tf.float32), y), num_parallel_calls=AUTOTUNE)
-    ds = ds.map(lambda x, y: (augmenter(x, training=True), y), num_parallel_calls=AUTOTUNE)
-    return ds.prefetch(AUTOTUNE)
