@@ -26,11 +26,6 @@ Preparación, una vez:
    repositorio y guardarlo en Kaggle Secrets como `GITHUB_TOKEN`.
 3. Habilitar Internet en el notebook.
 
-El clon usa `GIT_LFS_SKIP_SMUDGE=1`: descargar los pesos consume la cuota
-mensual de LFS y no hacen falta para entrenar. Subirlos no consume ancho de
-banda, pero igual se quedan fuera del commit — a git van solo `run.json`,
-`metrics.json`, `history.json` y las figuras.
-
 El token nunca toca el disco: viaja por el entorno y git lo pide con un
 credential helper, así que no queda en el remoto ni en `.git/config`. El clon
 va a `/tmp` y no a `/kaggle/working` porque esa carpeta se guarda como salida
@@ -38,6 +33,22 @@ del notebook.
 
 No hay nada que configurar: `corpus.py` detecta Kaggle y toma el único dataset
 adjunto que traiga `versiones/`.
+
+### Los pesos
+
+`model.keras` está en `.gitignore` y el repo ya no usa LFS. A git van solo
+`run.json`, `metrics.json`, `history.json` y las figuras; los pesos van a
+**GitHub Releases**, un release por run.
+
+En Kaggle es la única forma de que sobrevivan a la sesión: el clon está en
+`/tmp` y la plataforma solo conserva `/kaggle/working`. Los assets de release
+no consumen cuota de LFS, y mientras el repo sea público bajarlos no pide
+token.
+
+`publicarRun` los sube antes de commitear. Los notebooks que cargan un modelo
+ajeno — destilación, comparación, Grad-CAM — usan `registro.rutaModelo(runId)`,
+que lo busca en disco, luego en un dataset adjunto, y si no lo baja del
+release y lo cachea. La destilación encuentra a su docente sin pasos manuales.
 
 Para entrenar sobre otra versión sin tocar `corpus.json`, exportar
 `BUTTERFLY_VERSION`.

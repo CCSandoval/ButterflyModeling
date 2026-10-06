@@ -69,8 +69,7 @@ CABEZA_POOL = "cabeza_pool"
 
 
 def buildModel(name, numClasses, aumentar=True):
-    """`aumentar=False` para destilacion, donde la augmentation va en tf.data
-    porque docente y estudiante deben recibir la misma imagen transformada."""
+    """`aumentar=False` para destilación, que aumenta en tf.data."""
     if name == "cnn_compacta":
         return buildCompactCNN(numClasses)
 

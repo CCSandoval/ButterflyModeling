@@ -30,7 +30,6 @@ def _api(url, datos=None, cuerpo=None, tipo=None, metodo=None):
 
 
 def _release(runId):
-    """El release del run, creándolo si aún no existe."""
     try:
         return _api(f"{API}/releases/tags/{runId}")
     except urllib.error.HTTPError as error:
@@ -43,7 +42,6 @@ def _release(runId):
 
 
 def subir(runId, origen):
-    """Sube model.keras como asset. Si ya estaba, lo reemplaza."""
     release = _release(runId)
     for asset in release.get("assets", []):
         if asset["name"] == "model.keras":
@@ -55,7 +53,6 @@ def subir(runId, origen):
 
 
 def descargar(runId, destino):
-    """Baja model.keras del release del run. Sin token si el repo es público."""
     url = f"https://github.com/{REPO}/releases/download/{runId}/model.keras"
     destino.parent.mkdir(parents=True, exist_ok=True)
     print(f"bajando pesos de {runId}…")

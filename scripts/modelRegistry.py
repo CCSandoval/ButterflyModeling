@@ -20,9 +20,7 @@ def buildRunId(name):
 
 
 def commitActual():
-    """
-    El commit del que salió el código de este run.
-    """
+    """Commit del que salió el código; sufijo -sucio si hay cambios sin commitear."""
     def corre(*args):
         return subprocess.run(["git", *args], cwd=ROOT_DIR, capture_output=True, text=True)
 

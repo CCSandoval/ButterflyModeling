@@ -1,8 +1,4 @@
-"""Publica en GitHub los artefactos de un run entrenado en Kaggle.
-
-El token nunca se escribe en disco: viaja por el entorno y git lo pide con un
-credential helper, así que no queda en el remoto ni en `.git/config`.
-"""
+"""Publica en GitHub los artefactos de un run entrenado en Kaggle."""
 
 import os
 import subprocess
@@ -13,7 +9,6 @@ from scripts import pesos
 CLON = Path("/tmp/ButterflyModeling")
 AYUDA_CREDENCIAL = "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"
 
-# los pesos están en .gitignore: a git solo van los artefactos chicos
 PUBLICABLES = ("run.json", "metrics.json", "history.json", "imgs")
 
 SUELTOS = ("outputs/current_run.json", "outputs/student.json", "outputs/teacher.json")
@@ -29,9 +24,7 @@ def git(*args):
 
 
 def publicarRun(runId):
-    """El run se commitea antes del rebase y el registro después: así lo único
-    que comparten dos sesiones es un archivo que se regenera, y el rebase nunca
-    tiene que resolver un conflicto dentro de un JSON."""
+    """El run se commitea antes del rebase y el registro después."""
     from scripts import modelRegistry as registro
 
     git("config", "user.email", "kaggle@noreply.local")

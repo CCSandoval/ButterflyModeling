@@ -7,10 +7,7 @@ SEMILLA = 42
 
 
 def aumentadorGeometrico():
-    """Las cuatro transformaciones caras, las que remuestrean la imagen.
-    Van dentro del modelo para que corran en GPU
-    El prefijo aug_ permite a descongelarCola excluirlas del conteo de backbone.
-    """
+    """Las cuatro caras, las que remuestrean. Van dentro del modelo, en GPU."""
     return tf.keras.Sequential([
         tf.keras.layers.RandomFlip("horizontal_and_vertical", seed=SEMILLA, name="aug_flip"),
         tf.keras.layers.RandomRotation(25 / 360, seed=SEMILLA, fill_mode="nearest", name="aug_rot"),
@@ -20,19 +17,14 @@ def aumentadorGeometrico():
 
 
 def aumentadorFotometrico():
-    """El brillo se queda en tf.data: es una suma y cuesta nada.
-
-    No puede ir en el modelo porque su value_range asume 0-255, y ahi la imagen
-    ya viene normalizada por preprocess_input, distinto segun la arquitectura.
-    """
+    """El brillo, en tf.data: su value_range asume 0-255, antes del preprocess."""
     return tf.keras.Sequential([
         tf.keras.layers.RandomBrightness(0.2, value_range=(0, 255), seed=SEMILLA),
     ], name="aug_brillo")
 
 
 def buildAugmenter():
-    """Las cinco juntas, en tf.data. Lo usa destilacion, donde docente y
-    estudiante tienen que ver exactamente la misma imagen aumentada."""
+    """Las cinco en tf.data, para destilación."""
     return tf.keras.Sequential([aumentadorGeometrico(), aumentadorFotometrico()])
 
 
