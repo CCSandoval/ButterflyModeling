@@ -1,6 +1,27 @@
 {
   "runs": [
     {
+      "run_id": "20261006T135338Z_efficientnet-b0",
+      "name": "efficientnet-b0",
+      "dataset_version": "v1",
+      "architecture": "efficientnet_b0",
+      "role": "estudiante",
+      "teacher_run_id": null,
+      "distillation": null,
+      "finetuning": 0.3,
+      "num_classes": 79,
+      "epochs_ran": 50,
+      "training_minutes": 41.8,
+      "test_accuracy": 0.8976225133430373,
+      "test_macro_f1": 0.8947610110113193,
+      "validate_accuracy": 0.9113680154142582,
+      "validate_macro_f1": 0.9114666032544212,
+      "acelerador": "GPU",
+      "commit": "dbd631c",
+      "notes": "Candidato a estudiante: efficientnet-b0 + cabeza comun",
+      "created_at": "2026-10-06T13:54:22.145342+00:00"
+    },
+    {
       "run_id": "20261006T132607Z_mobilenet-v2",
       "name": "mobilenet-v2",
       "dataset_version": "v1",
