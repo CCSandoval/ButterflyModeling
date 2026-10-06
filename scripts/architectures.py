@@ -1,5 +1,7 @@
 import numpy as np
 from tensorflow.keras import Model, layers
+
+from scripts.dataPipeline import aumentadorGeometrico
 from tensorflow.keras.applications import (
     DenseNet121,
     EfficientNetB0,
@@ -66,12 +68,16 @@ IMG_SIZE = (320, 320)
 CABEZA_POOL = "cabeza_pool"
 
 
-def buildModel(name, numClasses):
+def buildModel(name, numClasses, aumentar=True):
+    """`aumentar=False` para destilacion, donde la augmentation va en tf.data
+    porque docente y estudiante deben recibir la misma imagen transformada."""
     if name == "cnn_compacta":
         return buildCompactCNN(numClasses)
 
     baseClass, _, _ = ARCHITECTURES[name]
-    base = baseClass(weights="imagenet", include_top=False, input_shape=(*IMG_SIZE, 3))
+    entrada = layers.Input(shape=(*IMG_SIZE, 3))
+    tensor = aumentadorGeometrico()(entrada) if aumentar else entrada
+    base = baseClass(weights="imagenet", include_top=False, input_tensor=tensor)
     base.trainable = False
 
     x = base.output
@@ -87,7 +93,7 @@ def buildModel(name, numClasses):
     x = layers.Dropout(0.50)(x)
     output = layers.Dense(numClasses, activation="softmax")(x)
 
-    return Model(inputs=base.input, outputs=output)
+    return Model(inputs=entrada, outputs=output)
 
 
 def descongelarCola(modelo, fraccion):
@@ -97,7 +103,7 @@ def descongelarCola(modelo, fraccion):
     estadísticas de ImageNet se degradan más de lo que aporta ajustarlas.
     """
     corte = [l.name for l in modelo.layers].index(CABEZA_POOL)
-    backbone = modelo.layers[:corte]
+    backbone = [c for c in modelo.layers[:corte] if not c.name.startswith("aug_")]
     desde = int(len(backbone) * (1 - fraccion))
 
     for capa in backbone[desde:]:
