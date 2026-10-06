@@ -8,6 +8,8 @@ import os
 import subprocess
 from pathlib import Path
 
+from scripts import pesos
+
 CLON = Path("/tmp/ButterflyModeling")
 AYUDA_CREDENCIAL = "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"
 
@@ -36,6 +38,9 @@ def publicarRun(runId):
     if not git("status", "--porcelain"):
         print("sin cambios que publicar")
         return
+
+    # antes del commit: si la subida falla, el run no queda registrado sin pesos
+    pesos.subir(runId, CLON / carpeta / "model.keras")
 
     git("commit", "-m", f"Add run {runId}")
     git("pull", "--rebase")

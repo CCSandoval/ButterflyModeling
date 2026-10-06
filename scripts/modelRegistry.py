@@ -3,6 +3,8 @@ import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
+from scripts import pesos
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 OUTPUTS_DIR = ROOT_DIR / "outputs"
 RUNS_DIR = OUTPUTS_DIR / "runs"
@@ -112,9 +114,7 @@ def rutaModelo(runId):
 
     for montado in buscarEnEntrada(f"{runId}/model.keras"):
         return montado
-    raise FileNotFoundError(
-        f"No hay pesos para {runId}: entrenarlo, o adjuntar a la sesión un "
-        f"dataset que contenga {runId}/model.keras")
+    return pesos.descargar(runId, local)
 
 
 def loadRunMetrics(runId):
