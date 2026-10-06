@@ -16,21 +16,28 @@ def buildAugmenter():
     ])
 
 
+BUFFER_MEZCLA = 4096
+
+
 def loadSplit(directory, img_size, batch_size, shuffle=True):
     ds = tf.keras.utils.image_dataset_from_directory(
         directory,
         image_size=img_size,
-        batch_size=batch_size,
+        batch_size=None,
         label_mode="categorical",
-        shuffle=shuffle,
-        seed=SEMILLA,
+        shuffle=False,
     )
-    return ds, ds.class_names
+    clases = ds.class_names
+    ds = ds.map(lambda x, y: (tf.cast(x, tf.uint8), y), num_parallel_calls=AUTOTUNE).cache()
+    if shuffle:
+        ds = ds.shuffle(BUFFER_MEZCLA, seed=SEMILLA, reshuffle_each_iteration=True)
+    return ds.batch(batch_size), clases
 
 
 def preparar(ds, preprocess_fn, augmenter=None):
     """Aplica augmentation (solo entrenamiento) y el preprocess_input de la
     arquitectura."""
+    ds = ds.map(lambda x, y: (tf.cast(x, tf.float32), y), num_parallel_calls=AUTOTUNE)
     if augmenter is not None:
         ds = ds.map(lambda x, y: (augmenter(x, training=True), y), num_parallel_calls=AUTOTUNE)
     ds = ds.map(lambda x, y: (preprocess_fn(x), y), num_parallel_calls=AUTOTUNE)
@@ -38,5 +45,6 @@ def preparar(ds, preprocess_fn, augmenter=None):
 
 
 def prepararCrudo(ds, augmenter):
+    ds = ds.map(lambda x, y: (tf.cast(x, tf.float32), y), num_parallel_calls=AUTOTUNE)
     ds = ds.map(lambda x, y: (augmenter(x, training=True), y), num_parallel_calls=AUTOTUNE)
     return ds.prefetch(AUTOTUNE)
