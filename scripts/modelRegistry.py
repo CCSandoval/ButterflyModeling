@@ -1,5 +1,6 @@
 import json
 import shutil
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -16,6 +17,23 @@ CURRENT_RUN_PATH = OUTPUTS_DIR / "current_run.json"
 def buildRunId(name):
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     return f"{stamp}_{name}"
+
+
+def commitActual():
+    """
+    El commit del que salió el código de este run.
+    """
+    def corre(*args):
+        return subprocess.run(["git", *args], cwd=ROOT_DIR, capture_output=True, text=True)
+
+    try:
+        hecho = corre("rev-parse", "--short", "HEAD")
+    except OSError:
+        return None
+    if hecho.returncode:
+        return None
+    commit = hecho.stdout.strip()
+    return f"{commit}-sucio" if corre("status", "--porcelain", "-uno").stdout.strip() else commit
 
 
 def runDir(runId):
@@ -66,6 +84,7 @@ def entradaDe(runId):
         "validate_accuracy": splits.get("validate", {}).get("accuracy"),
         "validate_macro_f1": splits.get("validate", {}).get("macro_f1"),
         "acelerador": config.get("environment", {}).get("acelerador", "cpu"),
+        "commit": config.get("environment", {}).get("commit"),
         "notes": config.get("notes"),
         "created_at": config.get("started_at"),
     }
