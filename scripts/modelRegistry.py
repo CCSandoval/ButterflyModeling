@@ -104,6 +104,17 @@ def findRun(reference):
     raise ValueError(f"No existe el run '{reference}'")
 
 
+def rutaModelo(runId):
+    local = runDir(runId) / "model.keras"
+    if local.exists():
+        return local
+    for montado in sorted(Path("/kaggle/input").glob(f"*/{runId}/model.keras")):
+        return montado
+    raise FileNotFoundError(
+        f"No hay pesos para {runId}: entrenarlo, o adjuntar a la sesión un "
+        f"dataset que contenga {runId}/model.keras")
+
+
 def loadRunMetrics(runId):
     return readJson(runDir(runId) / "metrics.json", default={})
 
@@ -115,10 +126,7 @@ def loadRunConfig(runId):
 def promoteRun(reference):
     run = findRun(reference)
     runId = run["run_id"]
-    source = runDir(runId) / "model.keras"
-    if not source.exists():
-        raise FileNotFoundError(f"El run {runId} no tiene model.keras")
-    shutil.copyfile(source, PROMOTED_MODEL_PATH)
+    shutil.copyfile(rutaModelo(runId), PROMOTED_MODEL_PATH)
     metrics = loadRunMetrics(runId)
     writeJson(
         CURRENT_RUN_PATH,

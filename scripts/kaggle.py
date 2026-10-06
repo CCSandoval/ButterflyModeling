@@ -11,7 +11,7 @@ from pathlib import Path
 CLON = Path("/tmp/ButterflyModeling")
 AYUDA_CREDENCIAL = "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"
 
-# los pesos pesan y la cuota de LFS es finita: a git solo van los artefactos chicos
+# los pesos están en .gitignore: a git solo van los artefactos chicos
 PUBLICABLES = ("run.json", "metrics.json", "history.json", "imgs")
 
 
