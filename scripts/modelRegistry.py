@@ -40,18 +40,47 @@ def readJson(path, default=None):
         return json.load(handle)
 
 
+def entradaDe(runId):
+    config = loadRunConfig(runId)
+    if not config:
+        return None
+    splits = loadRunMetrics(runId).get("splits", {})
+    hiper = config.get("hyperparameters", {})
+    destilacion = config.get("distillation", {})
+    return {
+        "run_id": config.get("run_id", runId),
+        "name": config.get("name"),
+        "dataset_version": config.get("dataset_version"),
+        "architecture": config.get("architecture"),
+        "role": config.get("role"),
+        "teacher_run_id": destilacion.get("teacher_run_id"),
+        "distillation": destilacion.get("tipo"),
+        "finetuning": hiper.get("finetuning", destilacion.get("finetuning")),
+        "num_classes": config.get("num_classes"),
+        "epochs_ran": hiper.get("epochs_ran"),
+        "training_minutes": config.get("training_minutes"),
+        "test_accuracy": splits.get("test", {}).get("accuracy"),
+        "test_macro_f1": splits.get("test", {}).get("macro_f1"),
+        "validate_accuracy": splits.get("validate", {}).get("accuracy"),
+        "validate_macro_f1": splits.get("validate", {}).get("macro_f1"),
+        "acelerador": config.get("environment", {}).get("acelerador", "cpu"),
+        "notes": config.get("notes"),
+        "created_at": config.get("started_at"),
+    }
+
+
 def loadRegistry():
-    return readJson(REGISTRY_PATH, default={"runs": []})
-
-
-def registerRun(entry):
-    registry = loadRegistry()
-    runs = [r for r in registry.get("runs", []) if r.get("run_id") != entry["run_id"]]
-    runs.append(entry)
+    runs = [e for e in (entradaDe(d.name) for d in sorted(RUNS_DIR.glob("*")) if d.is_dir())
+            if e]
     runs.sort(key=lambda r: r.get("run_id", ""), reverse=True)
-    registry["runs"] = runs
+    return {"runs": runs}
+
+
+def registrar(runId):
+    """Refresca la caché del registro tras escribir run.json y metrics.json."""
+    registry = loadRegistry()
     writeJson(REGISTRY_PATH, registry)
-    return registry
+    return entradaDe(runId)
 
 
 def listRuns():
@@ -105,6 +134,3 @@ def promoteRun(reference):
     print(f"Run promovido: {runId}")
     return runId
 
-
-def resolvePromotedRun():
-    return readJson(CURRENT_RUN_PATH, default=None)

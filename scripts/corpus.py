@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -7,8 +8,11 @@ from sklearn.utils.class_weight import compute_class_weight
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 CORPUS_CONFIG_PATH = ROOT_DIR / "corpus.json"
-DATASET_DIR = ROOT_DIR / "dataset"
+ENLACE_DATASET = ROOT_DIR / "dataset"
 SPLITS = ("train", "test", "validate")
+EN_KAGGLE = Path("/kaggle").exists()
+
+DATASET_DIR = Path("/tmp/dataset") if EN_KAGGLE else ENLACE_DATASET
 
 
 def loadConfig():
@@ -17,11 +21,17 @@ def loadConfig():
 
 
 def repoDataset():
-    return (ROOT_DIR / loadConfig()["dataset_repo"]).resolve()
+    if not EN_KAGGLE:
+        return (ROOT_DIR / loadConfig()["dataset_repo"]).resolve()
+    montados = sorted(Path("/kaggle/input").glob("*/versiones"))
+    if len(montados) != 1:
+        raise RuntimeError(f"Se esperaba un dataset con versiones/ adjunto a la "
+                           f"sesión; hay {[m.parent.name for m in montados]}")
+    return montados[0].parent
 
 
 def versionActual():
-    return loadConfig()["version"]
+    return os.environ.get("BUTTERFLY_VERSION") or loadConfig()["version"]
 
 
 def listarVersiones():
@@ -78,13 +88,17 @@ def materializar():
     if not origen.exists():
         raise FileNotFoundError(
             f"La versión '{versionActual()}' apunta a {origen}, que no existe. "
-            f"Si es una versión nueva, falta poblar el pool en ButterflyDataset:\n"
-            f"    from corpus import versiones\n"
-            f"    versiones.materializarPool('{versionActual()}')")
+            f"Si es nueva, falta poblar el pool corriendo 02_preprocesamiento "
+            f"en ButterflyDataset.")
 
     DATASET_DIR.mkdir(parents=True, exist_ok=True)
     for split in SPLITS:
         _limpiar(DATASET_DIR / split)
+
+    # los notebooks leen "dataset/<split>" relativo a la raíz
+    if DATASET_DIR != ENLACE_DATASET:
+        _limpiar(ENLACE_DATASET)
+        ENLACE_DATASET.symlink_to(DATASET_DIR)
 
     if layout == "por_split":
         for split in SPLITS:
