@@ -1,8 +1,9 @@
 import tensorflow as tf
 
+PISO_PROB = 1e-30
 
 def temperarProbs(probs, temperatura):
-    logProbs = tf.math.log(tf.clip_by_value(probs, 1e-8, 1.0))
+    logProbs = tf.math.log(tf.clip_by_value(probs, PISO_PROB, 1.0))
     return tf.nn.softmax(logProbs / temperatura)
 
 
@@ -14,10 +15,9 @@ def perdidaRespuesta(probsDocente, probsEstudiante, etiquetas, temperatura, alfa
         axis=-1,
     )
     duro = tf.keras.losses.categorical_crossentropy(etiquetas, probsEstudiante)
-    porMuestra = alfa * (temperatura ** 2) * kl + (1.0 - alfa) * duro
     if pesos is not None:
-        porMuestra = porMuestra * tf.cast(pesos, porMuestra.dtype)
-    return tf.reduce_mean(porMuestra)
+        duro = duro * tf.cast(pesos, duro.dtype)
+    return tf.reduce_mean(alfa * (temperatura ** 2) * kl + (1.0 - alfa) * duro)
 
 
 def construirProyeccion(canalesSalida):
