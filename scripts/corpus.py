@@ -20,13 +20,19 @@ def loadConfig():
         return json.load(handle)
 
 
+def buscarEnEntrada(sufijo):
+    return sorted(Path("/kaggle/input").glob(f"datasets/*/*/{sufijo}"))
+
+
 def repoDataset():
     if not EN_KAGGLE:
         return (ROOT_DIR / loadConfig()["dataset_repo"]).resolve()
-    montados = sorted(Path("/kaggle/input").glob("*/versiones"))
+    montados = buscarEnEntrada("versiones")
     if len(montados) != 1:
+        adjuntos = sorted(str(d) for d in Path("/kaggle/input").glob("*/*"))
         raise RuntimeError(f"Se esperaba un dataset con versiones/ adjunto a la "
-                           f"sesión; hay {[m.parent.name for m in montados]}")
+                           f"sesión; hay {len(montados)}. Bajo /kaggle/input: "
+                           f"{adjuntos[:6]}")
     return montados[0].parent
 
 

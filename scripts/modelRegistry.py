@@ -108,7 +108,9 @@ def rutaModelo(runId):
     local = runDir(runId) / "model.keras"
     if local.exists():
         return local
-    for montado in sorted(Path("/kaggle/input").glob(f"*/{runId}/model.keras")):
+    from scripts.corpus import buscarEnEntrada
+
+    for montado in buscarEnEntrada(f"{runId}/model.keras"):
         return montado
     raise FileNotFoundError(
         f"No hay pesos para {runId}: entrenarlo, o adjuntar a la sesión un "
