@@ -68,7 +68,7 @@ def entradaDe(runId):
     return {
         "run_id": config.get("run_id", runId),
         "name": config.get("name"),
-        "dataset_version": config.get("dataset_version"),
+        "dataset": config.get("dataset"),
         "architecture": config.get("architecture"),
         "role": config.get("role"),
         "teacher_run_id": destilacion.get("teacher_run_id"),

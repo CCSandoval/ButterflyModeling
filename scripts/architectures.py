@@ -64,7 +64,7 @@ ESTUDIANTES = [
     "nasnet_mobile",        # búsqueda automática de arquitectura
 ]
 
-IMG_SIZE = (320, 320)
+IMG_SIZE = (448, 448)
 CABEZA_POOL = "cabeza_pool"
 
 

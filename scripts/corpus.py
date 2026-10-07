@@ -1,5 +1,4 @@
 import json
-import os
 import shutil
 from pathlib import Path
 
@@ -27,44 +26,33 @@ def buscarEnEntrada(sufijo):
 def repoDataset():
     if not EN_KAGGLE:
         return (ROOT_DIR / loadConfig()["dataset_repo"]).resolve()
-    montados = buscarEnEntrada("versiones")
+    montados = buscarEnEntrada("manifiesto.json")
     if len(montados) != 1:
         adjuntos = sorted(str(d) for d in Path("/kaggle/input").glob("*/*"))
-        raise RuntimeError(f"Se esperaba un dataset con versiones/ adjunto a la "
-                           f"sesión; hay {len(montados)}. Bajo /kaggle/input: "
+        raise RuntimeError(f"Se esperaba un dataset con manifiesto.json adjunto a "
+                           f"la sesión; hay {len(montados)}. Bajo /kaggle/input: "
                            f"{adjuntos[:6]}")
     return montados[0].parent
 
 
-def versionActual():
-    return os.environ.get("BUTTERFLY_VERSION") or loadConfig()["version"]
-
-
-def listarVersiones():
-    directorio = repoDataset() / "versiones"
-    return sorted(p.stem for p in directorio.glob("*.json")) if directorio.exists() else []
-
-
-def loadSplitManifest():
-    """Manifiesto de la versión seleccionada en corpus.json. Trae los parámetros
-    que la produjeron y qué archivo va a qué split."""
-    nombre = versionActual()
-    ruta = repoDataset() / "versiones" / f"{nombre}.json"
+def manifiesto():
+    """Parámetros que produjeron el corpus y qué archivo va a qué split."""
+    ruta = repoDataset() / "manifiesto.json"
     if not ruta.exists():
-        raise FileNotFoundError(
-            f"No existe la versión '{nombre}' en {ruta.parent}. Hay: {listarVersiones()}")
+        raise FileNotFoundError(f"No hay manifiesto en {ruta.parent}; corre "
+                                f"02_preprocesamiento en ButterflyDataset.")
     with open(ruta, encoding="utf-8") as handle:
         return json.load(handle)
 
 
 def classNames():
-    return sorted(loadSplitManifest()["reparto"].keys())
+    return sorted(manifiesto()["reparto"].keys())
 
 
 def classWeights():
     """Peso balanceado por clase a partir de los conteos de train del split
     (mismo criterio que sklearn.compute_class_weight, sin iterar el tf.data)."""
-    reparto = loadSplitManifest()["reparto"]
+    reparto = manifiesto()["reparto"]
     nombres = classNames()
     conteos = [len(reparto[n]["train"]) for n in nombres]
     y = np.repeat(np.arange(len(nombres)), conteos)
@@ -80,22 +68,12 @@ def _limpiar(ruta):
 
 
 def materializar():
-    """Symlinks locales en dataset/<split>/<especie>/ según la versión elegida.
-
-    El split ya viene decidido en el manifiesto; esto no lo recalcula. Soporta
-    los dos layouts que puede declarar una versión: `por_split` enlaza las tres
-    carpetas de golpe, `plano` enlaza archivo por archivo desde el pool
-    compartido, que es lo que permite que varias versiones no dupliquen disco.
-    """
-    manifiesto = loadSplitManifest()
-    origen = repoDataset() / manifiesto["imagenes"]["raiz"]
-    layout = manifiesto["imagenes"]["layout"]
-
+    """Symlinks en dataset/<split>/<especie>/. El split ya viene en el manifiesto."""
+    reparto = manifiesto()["reparto"]
+    origen = repoDataset() / "procesado"
     if not origen.exists():
-        raise FileNotFoundError(
-            f"La versión '{versionActual()}' apunta a {origen}, que no existe. "
-            f"Si es nueva, falta poblar el pool corriendo 02_preprocesamiento "
-            f"en ButterflyDataset.")
+        raise FileNotFoundError(f"No existe {origen}; corre 02_preprocesamiento "
+                                f"en ButterflyDataset.")
 
     DATASET_DIR.mkdir(parents=True, exist_ok=True)
     for split in SPLITS:
@@ -106,17 +84,11 @@ def materializar():
         _limpiar(ENLACE_DATASET)
         ENLACE_DATASET.symlink_to(DATASET_DIR)
 
-    if layout == "por_split":
+    for especie, splits in reparto.items():
         for split in SPLITS:
-            (DATASET_DIR / split).symlink_to(origen / split)
-    elif layout == "plano":
-        for especie, splits in manifiesto["reparto"].items():
-            for split in SPLITS:
-                carpeta = DATASET_DIR / split / especie
-                carpeta.mkdir(parents=True, exist_ok=True)
-                for archivo in splits[split]:
-                    (carpeta / archivo).symlink_to(origen / especie / archivo)
-    else:
-        raise ValueError(f"Layout desconocido: {layout}")
+            carpeta = DATASET_DIR / split / especie
+            carpeta.mkdir(parents=True, exist_ok=True)
+            for archivo in splits[split]:
+                (carpeta / archivo).symlink_to(origen / especie / archivo)
 
     return DATASET_DIR

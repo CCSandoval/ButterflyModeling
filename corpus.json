@@ -1,4 +1,3 @@
 {
-  "dataset_repo": "../ButterflyDataset",
-  "version": "v1"
+  "dataset_repo": "../ButterflyDataset"
 }
