@@ -1,11 +1,13 @@
 {
-  "run_id": "20260912T044001Z_mobilenet-v3-small",
+  "run_id": "20261007T124302Z_mobilenet-v3-small",
   "architecture": "mobilenet_v3_small",
   "finetuning": 0.3,
-  "test_accuracy": 0.8462657613967022,
-  "test_macro_f1": 0.8426300455935061,
-  "top3_accuracy": 0.9476236663433559,
+  "dataset": "2026-10-07T05:04:51.558690+00:00",
+  "test_accuracy": 0.9064662843583152,
+  "test_macro_f1": 0.9048653462069489,
+  "validate_macro_f1": 0.9033390037953635,
+  "top3_accuracy": 0.9626260628831322,
   "pesos_MB": 5.7,
-  "latencia_ms": 46.5,
+  "latencia_ms": 232.8,
   "presupuesto_MB": 8.0
 }
