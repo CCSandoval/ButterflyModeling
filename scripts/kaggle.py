@@ -23,6 +23,23 @@ def git(*args):
     return hecho.stdout.strip()
 
 
+def publicarArchivos(mensaje, *rutas):
+    """Para notebooks que no producen un run: comparaciones y figuras."""
+    git("config", "user.email", "kaggle@noreply.local")
+    git("config", "user.name", "kaggle")
+    for ruta in rutas:
+        if (CLON / ruta).exists():
+            git("add", str(ruta))
+    if git("status", "--porcelain"):
+        git("commit", "-m", mensaje)
+    git("pull", "--rebase")
+    if not git("log", "--oneline", "@{u}..HEAD"):
+        print("nada que publicar")
+        return
+    git("push")
+    print(mensaje)
+
+
 def publicarRun(runId):
     """El run se commitea antes del rebase y el registro después."""
     from scripts import modelRegistry as registro
