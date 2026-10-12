@@ -143,14 +143,21 @@ def loadRunConfig(runId):
 
 def modeloInferencia(runId):
     """El modelo sin las capas de augmentation, que el conversor de TF.js no
-    acepta. No tienen pesos, así que las dos listas coinciden."""
-    import tensorflow as tf
+    acepta. No tienen pesos, así que las dos listas coinciden.
 
+    Reconstruye la topología con buildModel y del archivo lee solo los pesos:
+    deserializar la configuración rompe cuando Kaggle guarda con una Keras más
+    nueva que la local.
+    """
     from scripts.architectures import buildModel
 
     config = loadRunConfig(runId)
-    entrenado = tf.keras.models.load_model(rutaModelo(runId))
-    limpio = buildModel(config["architecture"], config["num_classes"], aumentar=False)
+    arquitectura, clases = config["architecture"], config["num_classes"]
+
+    entrenado = buildModel(arquitectura, clases, aumentar=True)
+    entrenado.load_weights(rutaModelo(runId))
+
+    limpio = buildModel(arquitectura, clases, aumentar=False)
     limpio.set_weights(entrenado.get_weights())
     return limpio
 

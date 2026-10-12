@@ -9,3 +9,4 @@ outputs/respaldos
 
 *.keras
 capturas/
+outputs/current_run.json

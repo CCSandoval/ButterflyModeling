@@ -20,10 +20,9 @@ def cargar():
     info = registro.readJson(registro.CURRENT_RUN_PATH)
     if info is None:
         return None, None
-    ruta = registro.PROMOTED_MODEL_PATH
-    if not ruta.exists():
-        ruta = registro.rutaModelo(info["run_id"])
-    return tf.keras.models.load_model(ruta), info
+    if registro.PROMOTED_MODEL_PATH.exists():
+        return tf.keras.models.load_model(registro.PROMOTED_MODEL_PATH), info
+    return registro.modeloInferencia(info["run_id"]), info
 
 
 def predecir(modelo, info, imagen):
@@ -51,12 +50,19 @@ if modelo is None:
     st.error("No hay modelo promovido. Corre `registro.promoteRun(run_id)` primero.")
     st.stop()
 
+salidas = modelo.output_shape[-1]
+if salidas != len(info["class_names"]):
+    st.error(f"El modelo tiene {salidas} salidas y current_run.json lista "
+             f"{len(info['class_names'])} especies: el puntero y el archivo no "
+             f"corresponden. Vuelve a promover en local.")
+    st.stop()
+
 tamano = tuple(modelo.input_shape[1:3])
-st.caption(f"{info['architecture']} · {info['num_classes']} especies · {tamano[0]}px · "
+st.caption(f"{info['architecture']} · {salidas} especies · {tamano[0]}px · "
            f"promovido {info['promoted_at'][:10]}")
 if tamano != IMG_SIZE:
-    st.warning(f"El modelo promovido espera {tamano[0]}px y la configuración actual "
-               f"es {IMG_SIZE[0]}px: es anterior al corpus vigente. Vuelve a promover.")
+    st.warning(f"El modelo espera {tamano[0]}px y la configuración actual es "
+               f"{IMG_SIZE[0]}px: es anterior al corpus vigente.")
 
 archivo = st.file_uploader("Foto de la mariposa", type=["jpg", "jpeg", "png"])
 if archivo is None:
