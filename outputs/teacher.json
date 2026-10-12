@@ -1,10 +1,10 @@
 {
-  "run_id": "20261007T141912Z_efficientnet-v2-s",
-  "architecture": "efficientnet_v2_s",
+  "run_id": "20261007T192046Z_efficientnet-b0",
+  "architecture": "efficientnet_b0",
   "dataset": "2026-10-07T05:04:51.558690+00:00",
-  "test_accuracy": 0.9402807988926241,
-  "test_macro_f1": 0.938737785025331,
-  "validate_macro_f1": 0.9373571895282312,
-  "latencia_ms": 1220.3,
-  "parametros_M": 21.17
+  "test_accuracy": 0.9446312042713071,
+  "test_macro_f1": 0.9431336339472352,
+  "validate_macro_f1": 0.9424097625167122,
+  "latencia_ms": 568.9,
+  "parametros_M": 4.89
 }
