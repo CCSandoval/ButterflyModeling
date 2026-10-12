@@ -47,23 +47,6 @@ ARCHITECTURES = {
     "cnn_compacta": (None, sinPreprocess, "conv_final"),
 }
 
-# Candidatos a docente: se elige el de mejor macro-F1, sin mirar costo.
-DOCENTES = [
-    "efficientnet_v2_s",
-    "efficientnet_v2_b0",
-    "resnet50_v2",
-    "densenet121",
-    "inception_v3",
-]
-
-# Candidatos a estudiante: se elige por costo/calidad, no por calidad sola.
-ESTUDIANTES = [
-    "mobilenet_v3_small",   # separable + SE
-    "mobilenet_v2",         # residual invertido
-    "efficientnet_b0",      # escalado compuesto
-    "nasnet_mobile",        # búsqueda automática de arquitectura
-]
-
 IMG_SIZE = (448, 448)
 CABEZA_POOL = "cabeza_pool"
 

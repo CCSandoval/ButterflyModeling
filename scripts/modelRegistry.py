@@ -1,5 +1,4 @@
 import json
-import shutil
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -142,10 +141,24 @@ def loadRunConfig(runId):
     return readJson(runDir(runId) / "run.json", default={})
 
 
+def modeloInferencia(runId):
+    """El modelo sin las capas de augmentation, que el conversor de TF.js no
+    acepta. No tienen pesos, así que las dos listas coinciden."""
+    import tensorflow as tf
+
+    from scripts.architectures import buildModel
+
+    config = loadRunConfig(runId)
+    entrenado = tf.keras.models.load_model(rutaModelo(runId))
+    limpio = buildModel(config["architecture"], config["num_classes"], aumentar=False)
+    limpio.set_weights(entrenado.get_weights())
+    return limpio
+
+
 def promoteRun(reference):
     run = findRun(reference)
     runId = run["run_id"]
-    shutil.copyfile(rutaModelo(runId), PROMOTED_MODEL_PATH)
+    modeloInferencia(runId).save(PROMOTED_MODEL_PATH)
     metrics = loadRunMetrics(runId)
     writeJson(
         CURRENT_RUN_PATH,
