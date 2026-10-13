@@ -14,17 +14,18 @@ def preprocessImage(img: Image.Image, targetSize: tuple, preprocessFn) -> np.nda
 def computeGradcam(model, img: Image.Image, classIndex: int, preprocessFn) -> np.ndarray:
     from scripts.architectures import capaFeatures
 
+    salida = model.layers[-1]
     gradModel = tf.keras.models.Model(
         inputs=model.input,
-        outputs=[capaFeatures(model), model.output],
+        outputs=[capaFeatures(model), salida.input],
     )
 
     targetSize = (model.input_shape[2], model.input_shape[1])
     imgArray = preprocessImage(img, targetSize, preprocessFn)
 
     with tf.GradientTape() as tape:
-        convOutputs, predictions = gradModel(imgArray)
-        loss = predictions[:, classIndex]
+        convOutputs, penultima = gradModel(imgArray)
+        loss = (tf.matmul(penultima, salida.kernel) + salida.bias)[:, classIndex]
 
     grads = tape.gradient(loss, convOutputs)
     pooledGrads = tf.reduce_mean(grads, axis=(0, 1, 2))
