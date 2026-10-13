@@ -31,20 +31,20 @@ def sinPreprocess(x):
     return x
 
 
-# nombre -> (clase base, preprocess_input, capa conv para Grad-CAM)
+# nombre -> (clase base, preprocess_input)
 ARCHITECTURES = {
-    "efficientnet_v2_s": (EfficientNetV2S, efficientnetV2Preprocess, "top_activation"),
-    "efficientnet_v2_b0": (EfficientNetV2B0, efficientnetV2Preprocess, "top_activation"),
-    "resnet50_v2": (ResNet50V2, resnetPreprocess, "post_relu"),
-    "densenet121": (DenseNet121, densenetPreprocess, "relu"),
-    "inception_v3": (InceptionV3, inceptionPreprocess, "mixed10"),
-    "mobilenet_v3_small": (MobileNetV3Small, mobilenetV3Preprocess, "conv_1"),
-    "mobilenet_v2": (MobileNetV2, mobilenetV2Preprocess, "out_relu"),
-    "mobilenet": (MobileNet, mobilenetPreprocess, "conv_pw_13_relu"),
-    "mobilenet_v3_large": (MobileNetV3Large, mobilenetV3Preprocess, "conv_1"),
-    "efficientnet_b0": (EfficientNetB0, efficientnetPreprocess, "top_activation"),
-    "nasnet_mobile": (NASNetMobile, nasnetPreprocess, "normal_concat_12"),
-    "cnn_compacta": (None, sinPreprocess, "conv_final"),
+    "efficientnet_v2_s": (EfficientNetV2S, efficientnetV2Preprocess),
+    "efficientnet_v2_b0": (EfficientNetV2B0, efficientnetV2Preprocess),
+    "resnet50_v2": (ResNet50V2, resnetPreprocess),
+    "densenet121": (DenseNet121, densenetPreprocess),
+    "inception_v3": (InceptionV3, inceptionPreprocess),
+    "mobilenet_v3_small": (MobileNetV3Small, mobilenetV3Preprocess),
+    "mobilenet_v2": (MobileNetV2, mobilenetV2Preprocess),
+    "mobilenet": (MobileNet, mobilenetPreprocess),
+    "mobilenet_v3_large": (MobileNetV3Large, mobilenetV3Preprocess),
+    "efficientnet_b0": (EfficientNetB0, efficientnetPreprocess),
+    "nasnet_mobile": (NASNetMobile, nasnetPreprocess),
+    "cnn_compacta": (None, sinPreprocess),
 }
 
 IMG_SIZE = (448, 448)
@@ -56,7 +56,7 @@ def buildModel(name, numClasses, aumentar=True):
     if name == "cnn_compacta":
         return buildCompactCNN(numClasses)
 
-    baseClass, _, _ = ARCHITECTURES[name]
+    baseClass, _ = ARCHITECTURES[name]
     entrada = layers.Input(shape=(*IMG_SIZE, 3))
     tensor = aumentadorGeometrico()(entrada) if aumentar else entrada
     base = baseClass(weights="imagenet", include_top=False, input_tensor=tensor)
@@ -107,9 +107,6 @@ def capaFeatures(modelo):
 def preprocessFn(name):
     return ARCHITECTURES[name][1]
 
-
-def gradcamLayer(name):
-    return ARCHITECTURES[name][2]
 
 
 def buildCompactCNN(numClasses):

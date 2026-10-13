@@ -11,10 +11,12 @@ def preprocessImage(img: Image.Image, targetSize: tuple, preprocessFn) -> np.nda
     return np.expand_dims(arr, axis=0)
 
 
-def computeGradcam(model, img: Image.Image, classIndex: int, convLayer: str, preprocessFn) -> np.ndarray:
+def computeGradcam(model, img: Image.Image, classIndex: int, preprocessFn) -> np.ndarray:
+    from scripts.architectures import capaFeatures
+
     gradModel = tf.keras.models.Model(
         inputs=model.input,
-        outputs=[model.get_layer(convLayer).output, model.output],
+        outputs=[capaFeatures(model), model.output],
     )
 
     targetSize = (model.input_shape[2], model.input_shape[1])
