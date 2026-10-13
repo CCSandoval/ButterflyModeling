@@ -5,6 +5,6 @@
   "test_accuracy": 0.9446312042713071,
   "test_macro_f1": 0.9431336339472352,
   "validate_macro_f1": 0.9424097625167122,
-  "latencia_ms": 568.9,
+  "latencia_ms": 640.3,
   "parametros_M": 4.89
 }
