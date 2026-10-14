@@ -11,7 +11,7 @@ from PIL import Image
 
 from scripts import fichas as catalogo
 from scripts import modelRegistry as registro
-from scripts.architectures import preprocessFn
+from scripts.architectures import CABEZA_POOL, preprocessFn
 
 CAPTURAS = Path("capturas")
 TOP = 5
@@ -41,6 +41,37 @@ def cargarFichas():
 @st.cache_data
 def rutaImagen(especie):
     return str(catalogo.imagen(especie))
+
+
+@st.cache_data
+def estructura(runId):
+    """Capas del modelo de inferencia, partidas en backbone y cabeza."""
+    modelo, _, _ = cargar(runId)
+    corte = [c.name for c in modelo.layers].index(CABEZA_POOL)
+    return [{"parte": "backbone" if i < corte else "cabeza",
+             "capa": c.name,
+             "tipo": type(c).__name__,
+             "salida": str(tuple(c.output.shape[1:])),
+             "parámetros": c.count_params()}
+            for i, c in enumerate(modelo.layers)]
+
+
+def mostrarEstructura(runId, finetuning):
+    capas = estructura(runId)
+    porParte = {p: sum(c["parámetros"] for c in capas if c["parte"] == p)
+                for p in ("backbone", "cabeza")}
+    total = sum(porParte.values())
+
+    columnas = st.columns(4)
+    columnas[0].metric("Parámetros", f"{total / 1e6:.2f} M")
+    columnas[1].metric("Peso float32", f"{total * 4 / 2 ** 20:.1f} MB")
+    columnas[2].metric("Capas", len(capas))
+    columnas[3].metric("Cabeza", f"{porParte['cabeza'] / 1e6:.2f} M")
+
+    st.caption(f"Backbone preentrenado en ImageNet con {porParte['backbone'] / 1e6:.2f} M "
+               f"parámetros; durante el entrenamiento se descongeló su último "
+               f"{finetuning:.0%}. La cabeza de clasificación se entrenó entera.")
+    # st.dataframe(capas, hide_index=True, use_container_width=True, height=320)
 
 
 def enlace(texto, url):
@@ -81,6 +112,9 @@ st.sidebar.caption(f"macro-F1 {elegido['test_macro_f1']:.1%} · "
 modelo, arquitectura, clases = cargar(runId)
 st.caption(f"{arquitectura} · {len(clases)} especies · "
            f"{elegido['test_accuracy']:.1%} en test")
+
+with st.expander("Estructura del modelo"):
+    mostrarEstructura(runId, elegido["finetuning"])
 
 archivo = st.file_uploader("Foto de la mariposa", type=["jpg", "jpeg", "png"])
 if archivo is None:
