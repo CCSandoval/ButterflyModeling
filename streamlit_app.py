@@ -17,9 +17,17 @@ CAPTURAS = Path("capturas")
 TOP = 5
 
 
+@st.cache_data
+def catalogoModelos():
+    """Los runs del mismo corpus que el modelo del sitio, mejor primero."""
+    sitio = registro.readJson(registro.OUTPUTS_DIR / "student.json")
+    runs = [r for r in registro.listRuns() if r["dataset"] == sitio["dataset"]]
+    runs.sort(key=lambda r: -r["test_accuracy"])
+    return {r["run_id"]: r for r in runs}, sitio["run_id"]
+
+
 @st.cache_resource
-def cargar():
-    runId = registro.readJson(registro.OUTPUTS_DIR / "student.json")["run_id"]
+def cargar(runId):
     return (registro.modeloInferencia(runId),
             registro.loadRunConfig(runId)["architecture"],
             registro.loadRunMetrics(runId)["class_names"])
@@ -57,8 +65,22 @@ def mostrarFicha(ficha, especie):
 st.set_page_config(page_title="Mariposas del Tolima", page_icon="🦋")
 st.title("Mariposas del Tolima")
 
-modelo, arquitectura, clases = cargar()
-st.caption(f"{arquitectura} · {len(clases)} especies")
+modelos, predeterminado = catalogoModelos()
+
+def etiqueta(runId):
+    run = modelos[runId]
+    destilado = " destilado" if run["role"] == "destilado" else ""
+    return f"{run['architecture']}{destilado} · {run['test_accuracy']:.1%}"
+
+runId = st.sidebar.selectbox("Modelo", list(modelos), format_func=etiqueta,
+                             index=list(modelos).index(predeterminado))
+elegido = modelos[runId]
+st.sidebar.caption(f"macro-F1 {elegido['test_macro_f1']:.1%} · "
+                   f"{elegido['epochs_ran']} épocas · {runId}")
+
+modelo, arquitectura, clases = cargar(runId)
+st.caption(f"{arquitectura} · {len(clases)} especies · "
+           f"{elegido['test_accuracy']:.1%} en test")
 
 archivo = st.file_uploader("Foto de la mariposa", type=["jpg", "jpeg", "png"])
 if archivo is None:
