@@ -6,7 +6,7 @@ from urllib.parse import quote
 import streamlit as st
 from PIL import Image
 
-from pages import comun
+from paginas import comun
 from scripts import recorte
 
 

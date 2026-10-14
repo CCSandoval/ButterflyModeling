@@ -8,7 +8,6 @@ matplotlib
 scikit-learn==1.7.2
 streamlit>=1.40,<2.0
 altair
-tensorflowjs
 tabulate
 ipykernel
 nbformat

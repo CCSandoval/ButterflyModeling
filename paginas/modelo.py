@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from pages import comun
+from paginas import comun
 
 runId, run = comun.modeloActual()
 capas = comun.estructura(runId)

@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from pages import comun
+from paginas import comun
 
 st.set_page_config(page_title="Mariposas del Tolima", page_icon="🦋", layout="wide")
 

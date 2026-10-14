@@ -4,7 +4,7 @@ from collections import Counter
 
 import streamlit as st
 
-from pages import comun
+from paginas import comun
 
 manifiesto = comun.manifiestoCorpus()
 conteos, parametros = manifiesto["conteos"], manifiesto["parametros"]
