@@ -13,6 +13,7 @@ from PIL import Image
 from scripts import fichas as catalogo
 from scripts import gradcam
 from scripts import modelRegistry as registro
+from scripts import recorte
 from scripts.architectures import CABEZA_POOL, preprocessFn
 
 CAPTURAS = Path("capturas")
@@ -35,20 +36,29 @@ def cargar(runId):
             registro.loadRunMetrics(runId)["class_names"])
 
 
+@st.cache_resource
+def detector():
+    return recorte.cargarDetector()
+
+
 @st.cache_data(show_spinner="Analizando la foto…")
-def analizar(runId, datos):
-    """Predicción y mapa de atención de una foto, en una sola pasada cacheada."""
+def analizar(runId, datos, recortarAuto):
+    """Recorte, predicción y mapa de atención, en una sola pasada cacheada."""
     modelo, arquitectura, clases = cargar(runId)
     preprocesar = preprocessFn(arquitectura)
     imagen = Image.open(io.BytesIO(datos))
-    cuadrada = imagen.convert("RGB").resize(modelo.input_shape[1:3])
+
+    if recortarAuto:
+        cuadrada, pasos = recorte.preparar(detector(), imagen)
+    else:
+        cuadrada, pasos = imagen.convert("RGB").resize(modelo.input_shape[1:3]), None
 
     lote = np.asarray(cuadrada, dtype="float32")[None]
     probabilidades = modelo.predict(preprocesar(lote), verbose=0)[0]
     orden = np.argsort(probabilidades)[::-1][:TOP]
 
     mapa = gradcam.computeGradcam(modelo, cuadrada, int(orden[0]), preprocesar)
-    return (cuadrada, gradcam.overlayHeatmap(cuadrada, mapa),
+    return (cuadrada, gradcam.overlayHeatmap(cuadrada, mapa), pasos,
             [(clases[i], float(probabilidades[i])) for i in orden])
 
 
@@ -96,6 +106,33 @@ def mostrarEstructura(runId, run):
     # st.dataframe(capas, hide_index=True, use_container_width=True, height=320)
 
 
+def mostrarPasos(original, cuadrada, atencion, pasos):
+    columnas = st.columns(3)
+    columnas[0].image(recorte.conCaja(original, pasos["caja"]) if pasos else original,
+                      caption="1 · Tu foto, con la mariposa localizada")
+    columnas[1].image(cuadrada, caption=f"2 · Recorte cuadrado a {recorte.LADO_SALIDA} px")
+    columnas[2].image(atencion, caption="3 · En qué se fijó el modelo")
+
+    if pasos is None:
+        st.caption("Sin recorte automático: la foto entera se deformó a "
+                   f"{recorte.LADO_SALIDA} px, que no es como se entrenó el modelo.")
+        return
+    if pasos["caja"] is None:
+        st.warning("El detector no encontró ninguna mariposa, así que se usó el "
+                   "cuadrado central de la foto. La predicción es poco fiable.")
+        return
+
+    x, y, lado = pasos["cuadrado"]
+    escala = ("ampliado" if pasos["ampliado"] else "reducido")
+    st.caption(
+        f"Mariposa localizada con {pasos['confianza']:.0%} de confianza en una foto de "
+        f"{pasos['ancho']}×{pasos['alto']} px. El cuadrado toma el lado mayor de la caja "
+        f"más {recorte.MARGEN:.0%} de margen a cada lado: {lado} px desde ({x}, {y})"
+        + (", desplazado para no salirse del borde" if pasos["desplazado"] else "")
+        + f", y {escala} a {recorte.LADO_SALIDA} px. Después solo quedan las cuentas que "
+        f"cada arquitectura hace sobre los valores de color.")
+
+
 def enlace(texto, url):
     return f"[{texto}]({quote(url, safe=':/#?&=')})"
 
@@ -135,16 +172,19 @@ st.sidebar.caption(f"Reconoce {elegido['num_classes']} especies y acierta el "
 with st.expander("Estructura del modelo"):
     mostrarEstructura(runId, elegido)
 
+recortarAuto = st.sidebar.checkbox(
+    "Localizar la mariposa antes de clasificar", value=True,
+    help="Recorta un cuadrado alrededor de la mariposa, igual que en el corpus de "
+         "entrenamiento. Sin esto el modelo ve la foto completa deformada.")
+
 archivo = st.file_uploader("Foto de la mariposa", type=["jpg", "jpeg", "png"])
 if archivo is None:
     st.stop()
 
-cuadrada, atencion, predicciones = analizar(runId, archivo.getvalue())
+cuadrada, atencion, pasos, predicciones = analizar(runId, archivo.getvalue(), recortarAuto)
 especie, confianza = predicciones[0]
 
-izquierda, derecha = st.columns(2)
-izquierda.image(cuadrada, caption="Tu foto")
-derecha.image(atencion, caption="En qué se fijó el modelo")
+mostrarPasos(Image.open(archivo), cuadrada, atencion, pasos)
 
 ficha = cargarFichas()[especie]
 st.subheader(ficha["cientifico"])

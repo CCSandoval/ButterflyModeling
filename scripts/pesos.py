@@ -41,19 +41,19 @@ def _release(runId):
     })
 
 
-def subir(runId, origen):
+def subir(runId, origen, nombre="model.keras"):
     release = _release(runId)
     for asset in release.get("assets", []):
-        if asset["name"] == "model.keras":
+        if asset["name"] == nombre:
             _api(f"{API}/releases/assets/{asset['id']}", metodo="DELETE")
-    url = release["upload_url"].split("{")[0] + "?name=model.keras"
+    url = release["upload_url"].split("{")[0] + f"?name={nombre}"
     with open(origen, "rb") as archivo:
         _api(url, cuerpo=archivo.read(), tipo="application/octet-stream")
     print(f"pesos de {runId} publicados ({Path(origen).stat().st_size // 2**20} MB)")
 
 
-def descargar(runId, destino):
-    url = f"https://github.com/{REPO}/releases/download/{runId}/model.keras"
+def descargar(runId, destino, nombre="model.keras"):
+    url = f"https://github.com/{REPO}/releases/download/{runId}/{nombre}"
     destino.parent.mkdir(parents=True, exist_ok=True)
     print(f"bajando pesos de {runId}…")
     try:

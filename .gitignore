@@ -10,3 +10,5 @@ outputs/respaldos
 *.keras
 capturas/
 outputs/current_run.json
+outputs/*.pt
+outputs/fichas/
