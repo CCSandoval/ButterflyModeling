@@ -5,16 +5,24 @@ import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
 
 
-def medirLatencia(model, repeticiones=30):
-    """Milisegundos por imagen con lote de 1"""
+def medirLatencia(model, repeticiones=30, calentamiento=3):
+    """
+    Mediana y desviación en milisegundos por imagen, con lote de 1.
+    Mediana y no media porque la media se puede afectar con valores atípicos. 
+    """
     alto, ancho = model.input_shape[1:3]
     entrada = tf.random.uniform((1, alto, ancho, 3), 0, 255)
 
-    model(entrada, training=False)
-    inicio = time.time()
-    for _ in range(repeticiones):
+    for _ in range(calentamiento):
         model(entrada, training=False)
-    return (time.time() - inicio) / repeticiones * 1000
+
+    tiempos = []
+    for _ in range(repeticiones):
+        inicio = time.perf_counter()
+        model(entrada, training=False)
+        tiempos.append((time.perf_counter() - inicio) * 1000)
+
+    return float(np.median(tiempos)), float(np.std(tiempos))
 
 
 def evaluar(model, ds, classNames):

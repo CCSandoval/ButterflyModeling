@@ -16,7 +16,7 @@ st.write(f"**{run['architecture']}**, una red preentrenada en ImageNet a la que 
 
 columnas = st.columns(4)
 columnas[0].metric("Parámetros", f"{total / 1e6:.2f} M")
-columnas[1].metric("Peso float32", f"{total * 4 / 2 ** 20:.1f} MB")
+columnas[1].metric("Peso float32", f"{total * 4 / 1e6:.1f} MB")
 columnas[2].metric("Capas", len(capas))
 columnas[3].metric("Aciertos en test", f"{run['test_accuracy']:.1%}")
 
