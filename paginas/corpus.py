@@ -6,6 +6,16 @@ import streamlit as st
 
 from paginas import comun
 
+MOTIVOS = {
+    "sobreexpuesta": "Sobreexpuesta",
+    "recorte_pequeno": "Mariposa muy pequeña en la foto",
+    "desenfocada": "Desenfocada",
+    "casi_duplicado": "Casi idéntica a otra",
+    "sin_deteccion": "No se encontró mariposa",
+    "subexpuesta": "Demasiado oscura",
+    "especie_escasa": "Especie con muy pocas fotos",
+}
+
 manifiesto = comun.manifiestoCorpus()
 conteos, parametros = manifiesto["conteos"], manifiesto["parametros"]
 umbrales = parametros["umbrales"]
@@ -57,6 +67,7 @@ if st.checkbox("Ver el detalle", help="Baja 9 MB de auditoría"):
     total, aceptadas = sum(motivos.values()), motivos["aceptada"]
     st.caption(f"De {total} fotos candidatas se aceptaron {aceptadas}, "
                f"el {aceptadas / total:.0%}.")
-    st.bar_chart({k: v for k, v in sorted(motivos.items(), key=lambda par: -par[1])
+    st.bar_chart({MOTIVOS.get(k, k): v
+                  for k, v in sorted(motivos.items(), key=lambda par: -par[1])
                   if k != "aceptada"}, height=260,
                  x_label="motivo del descarte", y_label="imágenes")
