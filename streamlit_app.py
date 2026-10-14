@@ -1,5 +1,6 @@
 """Prototipo de clasificación con ficha de especie y captura etiquetada."""
 
+import io
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,6 +11,7 @@ import streamlit as st
 from PIL import Image
 
 from scripts import fichas as catalogo
+from scripts import gradcam
 from scripts import modelRegistry as registro
 from scripts.architectures import CABEZA_POOL, preprocessFn
 
@@ -31,6 +33,23 @@ def cargar(runId):
     return (registro.modeloInferencia(runId),
             registro.loadRunConfig(runId)["architecture"],
             registro.loadRunMetrics(runId)["class_names"])
+
+
+@st.cache_data(show_spinner="Analizando la foto…")
+def analizar(runId, datos):
+    """Predicción y mapa de atención de una foto, en una sola pasada cacheada."""
+    modelo, arquitectura, clases = cargar(runId)
+    preprocesar = preprocessFn(arquitectura)
+    imagen = Image.open(io.BytesIO(datos))
+    cuadrada = imagen.convert("RGB").resize(modelo.input_shape[1:3])
+
+    lote = np.asarray(cuadrada, dtype="float32")[None]
+    probabilidades = modelo.predict(preprocesar(lote), verbose=0)[0]
+    orden = np.argsort(probabilidades)[::-1][:TOP]
+
+    mapa = gradcam.computeGradcam(modelo, cuadrada, int(orden[0]), preprocesar)
+    return (cuadrada, gradcam.overlayHeatmap(cuadrada, mapa),
+            [(clases[i], float(probabilidades[i])) for i in orden])
 
 
 @st.cache_data
@@ -56,7 +75,7 @@ def estructura(runId):
             for i, c in enumerate(modelo.layers)]
 
 
-def mostrarEstructura(runId, finetuning):
+def mostrarEstructura(runId, run):
     capas = estructura(runId)
     porParte = {p: sum(c["parámetros"] for c in capas if c["parte"] == p)
                 for p in ("backbone", "cabeza")}
@@ -70,7 +89,10 @@ def mostrarEstructura(runId, finetuning):
 
     st.caption(f"Backbone preentrenado en ImageNet con {porParte['backbone'] / 1e6:.2f} M "
                f"parámetros; durante el entrenamiento se descongeló su último "
-               f"{finetuning:.0%}. La cabeza de clasificación se entrenó entera.")
+               f"{run['finetuning']:.0%}. La cabeza de clasificación se entrenó entera.")
+    st.caption(f"{run['architecture']} · macro-F1 {run['test_macro_f1']:.1%} · "
+               f"{run['epochs_ran']} épocas · {run['training_minutes']:.0f} min "
+               f"en {run['acelerador']} · run {runId}")
     # st.dataframe(capas, hide_index=True, use_container_width=True, height=320)
 
 
@@ -106,38 +128,34 @@ def etiqueta(runId):
 runId = st.sidebar.selectbox("Modelo", list(modelos), format_func=etiqueta,
                              index=list(modelos).index(predeterminado))
 elegido = modelos[runId]
-st.sidebar.caption(f"macro-F1 {elegido['test_macro_f1']:.1%} · "
-                   f"{elegido['epochs_ran']} épocas · {runId}")
-
-modelo, arquitectura, clases = cargar(runId)
-st.caption(f"{arquitectura} · {len(clases)} especies · "
-           f"{elegido['test_accuracy']:.1%} en test")
+st.sidebar.caption(f"Reconoce {elegido['num_classes']} especies y acierta el "
+                   f"{elegido['test_accuracy']:.0%} de las fotos de prueba, que no "
+                   f"vio mientras aprendía.")
 
 with st.expander("Estructura del modelo"):
-    mostrarEstructura(runId, elegido["finetuning"])
+    mostrarEstructura(runId, elegido)
 
 archivo = st.file_uploader("Foto de la mariposa", type=["jpg", "jpeg", "png"])
 if archivo is None:
     st.stop()
 
-imagen = Image.open(archivo)
-st.image(imagen, width=360)
+cuadrada, atencion, predicciones = analizar(runId, archivo.getvalue())
+especie, confianza = predicciones[0]
 
-lote = np.asarray(imagen.convert("RGB").resize(modelo.input_shape[1:3]), dtype="float32")
-probabilidades = modelo.predict(preprocessFn(arquitectura)(lote[None]), verbose=0)[0]
-orden = np.argsort(probabilidades)[::-1][:TOP]
-especie = clases[orden[0]]
+izquierda, derecha = st.columns(2)
+izquierda.image(cuadrada, caption="Tu foto")
+derecha.image(atencion, caption="En qué se fijó el modelo")
 
 ficha = cargarFichas()[especie]
 st.subheader(ficha["cientifico"])
 if ficha["comun"]:
     st.caption(ficha["comun"])
-st.progress(float(probabilidades[orden[0]]), text=f"{probabilidades[orden[0]]:.1%}")
+st.progress(confianza, text=f"{confianza:.1%}")
 mostrarFicha(ficha, especie)
 
 st.dataframe(
-    {"especie": [clases[i].replace("_", " ") for i in orden],
-     "confianza": [f"{probabilidades[i]:.2%}" for i in orden]},
+    {"especie": [e.replace("_", " ") for e, _ in predicciones],
+     "confianza": [f"{c:.2%}" for _, c in predicciones]},
     hide_index=True, use_container_width=True,
 )
 
