@@ -1,7 +1,10 @@
-"""Fichas de especie, del repo hermano en local y del repo público al desplegar."""
+"""Datos del corpus: del repo hermano en local y del repo público al desplegar."""
 
+import csv
+import io
 import json
 import urllib.request
+from collections import Counter
 from pathlib import Path
 
 CRUDO = "https://raw.githubusercontent.com/CCSandoval/ButterflyDataset/main"
@@ -15,12 +18,26 @@ def _repoLocal():
     return ruta if (ruta / "fichas.json").exists() else None
 
 
-def cargar():
+def _texto(nombre):
     local = _repoLocal()
     if local:
-        return json.loads((local / "fichas.json").read_text(encoding="utf-8"))
-    with urllib.request.urlopen(f"{CRUDO}/fichas.json") as respuesta:
-        return json.load(respuesta)
+        return (local / nombre).read_text(encoding="utf-8")
+    with urllib.request.urlopen(f"{CRUDO}/{nombre}") as respuesta:
+        return respuesta.read().decode("utf-8")
+
+
+def cargar():
+    return json.loads(_texto("fichas.json"))
+
+
+def manifiesto():
+    return json.loads(_texto("manifiesto.json"))
+
+
+def motivos():
+    """Veredictos de la auditoría. Son 9 MB: pedirlo solo cuando se muestren."""
+    filas = csv.DictReader(io.StringIO(_texto("auditoria.csv")))
+    return Counter(fila["motivo"] for fila in filas)
 
 
 def imagen(especie):
