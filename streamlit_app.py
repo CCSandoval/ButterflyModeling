@@ -9,7 +9,8 @@ st.set_page_config(page_title="Mariposas del Tolima", page_icon="🦋", layout="
 comun.selectorModelo()
 
 st.navigation([
-    st.Page("paginas/clasificar.py", title="Identificar", icon="🦋", default=True),
+    st.Page("paginas/inicio.py", title="El proyecto", icon="🏠", default=True),
+    st.Page("paginas/clasificar.py", title="Identificar", icon="🦋"),
     st.Page("paginas/modelo.py", title="Métricas del modelo", icon="🧠"),
     st.Page("paginas/corpus.py", title="Métricas del dataset", icon="📚"),
 ]).run()

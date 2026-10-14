@@ -37,8 +37,10 @@ st.caption(f"Se reparten en {conteos['train']} de entrenamiento, {conteos['test'
 
 st.divider()
 st.subheader("Imágenes por especie")
-st.bar_chart(dict(sorted(porEspecie.items(), key=lambda par: -par[1])),
-             height=260, x_label="especie", y_label="imágenes")
+st.bar_chart([{"especie": e, "imágenes": n} for e, n in
+              sorted(porEspecie.items(), key=lambda par: -par[1])],
+             x="especie", y="imágenes", height=260,
+             x_label="especie", y_label="imágenes")
 
 fichas = comun.cargarFichas().values()
 familias = Counter(f["familia"] for f in fichas).most_common()
@@ -67,7 +69,8 @@ if st.checkbox("Ver el detalle", help="Baja 9 MB de auditoría"):
     total, aceptadas = sum(motivos.values()), motivos["aceptada"]
     st.caption(f"De {total} fotos candidatas se aceptaron {aceptadas}, "
                f"el {aceptadas / total:.0%}.")
-    st.bar_chart({MOTIVOS.get(k, k): v
+    st.bar_chart([{"motivo": MOTIVOS.get(k, k), "imágenes": v}
                   for k, v in sorted(motivos.items(), key=lambda par: -par[1])
-                  if k != "aceptada"}, height=260,
-                 x_label="motivo del descarte", y_label="imágenes")
+                  if k != "aceptada"],
+                 x="motivo", y="imágenes", horizontal=True, height=260,
+                 x_label="imágenes", y_label="")

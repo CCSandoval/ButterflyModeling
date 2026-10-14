@@ -1,14 +1,3 @@
----
-title: Mariposas del Tolima
-emoji: 🦋
-colorFrom: green
-colorTo: yellow
-sdk: streamlit
-sdk_version: 1.40.0
-app_file: streamlit_app.py
-pinned: false
----
-
 # ButterflyModeling
 
 Clasificación de especies de mariposas del Tolima con destilación de
