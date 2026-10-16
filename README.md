@@ -1,42 +1,53 @@
 # ButterflyModeling
 
-Clasificación de especies de mariposas del Tolima con destilación de
-conocimiento. La pregunta es si un modelo lo bastante pequeño para desplegar en
-un navegador puede acercarse a uno grande, y cuánto de esa distancia la cierra
-destilar en vez de simplemente entrenar mejor.
+Identificación automática de 100 especies de mariposas del Tolima a partir de una fotografía. Este repositorio contiene el prototipo desplegado y el código que entrenó y evaluó los modelos; el corpus lo produce [ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset).
 
-Este repositorio entrena y evalúa; el dataset lo produce
-[ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset).
+El prototipo localiza la mariposa con un detector, clasifica el recorte, muestra con Grad-CAM en qué zonas se apoyó la decisión y acompaña la predicción con una ficha de la especie.
 
-## El dataset
+## Correr el prototipo
 
-100 especies observadas en el Tolima, 25 306 imágenes recortadas a 448 px, con
-el reparto train/test/validate congelado en el manifiesto del repositorio
-hermano. Todos los runs comparten ese reparto, así que las diferencias entre
-ellos son del modelo y no de los datos.
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
 
-## El experimento
+No hace falta nada más. En el primer arranque descarga lo que necesita:
 
-Tres fases, cada una en su carpeta de `notebooks/`:
+| qué | de dónde | cuánto |
+|---|---|---|
+| pesos del clasificador | release de este repo | 6 MB |
+| detector YOLO-World | release `detector` de este repo | 25 MB |
+| fichas y manifiesto del corpus | ButterflyDataset por HTTP | 1 MB |
+| imagen de referencia por especie | ButterflyDataset por HTTP | 100 KB, bajo demanda |
 
-- **`01_student`** — cuatro candidatos a estudiante: MobileNetV3Small,
-  MobileNetV2, EfficientNetB0 y NASNetMobile. Se elige por calidad **dentro de
-  un presupuesto de descarga**, no por calidad sola.
-- **`02_teacher`** — cinco candidatos a docente: EfficientNetV2S,
-  EfficientNetV2B0, ResNet50V2, DenseNet121 e InceptionV3. Se elige por
-  macro-F1, sin mirar costo.
-- **`03_destilacion`** — cuatro variantes que transfieren del docente al
-  estudiante: respuesta con y sin descongelado, features y atención.
+El modelo que sirve el prototipo es el que indica `outputs/student.json`. El selector de la barra lateral permite cambiar entre los diez modelos entrenados sobre el mismo corpus.
 
-Cierran `04_comparacion_final` y `05_interpretabilidad_gradcam`. El `00_eda`
-describe el dataset y el `06`/`07` son diagnósticos que quedaron documentando
-por qué el pipeline es como es.
+## Replicar
 
-La selección en cada fase usa validación y reporta test, y los runs se filtran
-por dataset para que no se mezclen cifras de dos datasets distintos.
+Hay tres niveles, y **ninguno exige cuenta de Kaggle, token ni crear releases**.
+
+### 1 · Usar el prototipo
+
+Los dos comandos de arriba. Baja los pesos ya entrenados de los releases de este repositorio, que son públicos y anónimos.
+
+### 2 · Verificar los resultados
+
+`notebooks/05_seleccion` y `notebooks/06_gradcam`, en local, reproducen la tabla de selección, las latencias y los mapas de atención. Los pesos se bajan solos; hace falta el corpus en disco, que se reconstruye con los notebooks de [ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset) y es la parte lenta.
+
+### 3 · Reentrenar
+
+`notebooks/01..04_entrenamiento_*` entrenan cada candidato. En CPU cada uno toma horas, así que conviene una GPU; en este caso se usó Kaggle, pero el notebook es agnóstico, detecta el entorno y si está en Kaggle clona este repo para tener los módulos a mano.
+
+El run queda en `outputs/runs/<run_id>/` **con sus pesos en disco**, y todo lo de abajo los encuentra ahí: `registro.rutaModelo` mira primero el disco local y solo recurre al release si no están. **Quien reentrena no necesita publicar nada.**
+
+Publicar el run en un release es un paso opcional que solo hacen los autores y requiere un secreto `GITHUB_TOKEN`. Sin él los notebooks corren igual y lo avisan al arrancar.
+
+Los notebooks encuentran el corpus por la ruta que declara `corpus.json`, relativa a este repositorio.
+
+## En pausa
+
+`notebooks/pausado/` contiene el trabajo de comparación de arquitecturas y destilación, repartido en `docentes/` (los cinco candidatos y su selección), `destilacion/` (las cuatro variantes) y `diagnosticos/`, más la comparación final que cruza todos los modelos. Corren y sus runs están en el registro, pero no hacen falta para reproducir el prototipo.
 
 ## Resultados
 
-Cada entrenamiento deja su `run.json`, `metrics.json`, `history.json` y figuras
-en `outputs/runs/<run_id>/`, con los pesos en un release de GitHub. El estado
-al día está en `outputs/runs/registry.json`.
+El modelo desplegado, MobileNetV3Small, acierta el 90.6% en el conjunto de prueba ocupando 5.7 MB. El mejor de los diez, EfficientNetB0, llega al 94.5% con 19.6 MB.
