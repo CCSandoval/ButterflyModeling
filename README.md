@@ -32,11 +32,11 @@ Los dos comandos de arriba. Baja los pesos ya entrenados de los releases de este
 
 ### 2 · Verificar los resultados
 
-`notebooks/05_seleccion` y `notebooks/06_gradcam`, en local, reproducen la tabla de selección, las latencias y los mapas de atención. Los pesos se bajan solos; hace falta el corpus en disco, que se reconstruye con los notebooks de [ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset) y es la parte lenta.
+`notebooks/1. Entrenamiento/Seleccion` y `notebooks/3. Analisis/`, en local, reproducen la tabla de las nueve arquitecturas con sus latencias, la elección del estudiante y del docente, la comparación final y los mapas de atención. Los pesos se bajan solos; hace falta el corpus en disco, que se reconstruye con los notebooks de [ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset) y es la parte lenta.
 
 ### 3 · Reentrenar
 
-`notebooks/01..04_entrenamiento_*` entrenan cada candidato. En CPU cada uno toma horas, así que conviene una GPU; en este caso se usó Kaggle, pero el notebook es agnóstico, detecta el entorno y si está en Kaggle clona este repo para tener los módulos a mano.
+`notebooks/1. Entrenamiento/` tiene un notebook por arquitectura. En CPU cada uno toma horas, así que conviene una GPU; en este caso se usó Kaggle, pero el notebook es agnóstico, detecta el entorno y si está en Kaggle clona este repo para tener los módulos a mano.
 
 El run queda en `outputs/runs/<run_id>/` **con sus pesos en disco**, y todo lo de abajo los encuentra ahí: `registro.rutaModelo` mira primero el disco local y solo recurre al release si no están. **Quien reentrena no necesita publicar nada.**
 
@@ -44,9 +44,16 @@ Publicar el run en un release es un paso opcional que solo hacen los autores y r
 
 Los notebooks encuentran el corpus por la ruta que declara `corpus.json`, relativa a este repositorio.
 
-## En pausa
+## Qué hay en notebooks/
 
-`notebooks/pausado/` contiene el trabajo de comparación de arquitecturas y destilación, repartido en `docentes/` (los cinco candidatos y su selección), `destilacion/` (las cuatro variantes) y `diagnosticos/`, más la comparación final que cruza todos los modelos. Corren y sus runs están en el registro, pero no hacen falta para reproducir el prototipo.
+| carpeta | qué contiene |
+|---|---|
+| `1. Entrenamiento/` | un notebook por arquitectura, nueve en total, y `Seleccion`, que de la misma tabla saca el estudiante (el mejor dentro del presupuesto de descarga) y el docente (el mejor sin restricción) |
+| `2. Destilacion/` | destilación de respuesta y, sobre ella, transferencia de atención |
+| `3. Analisis/` | comparación final, con las destilaciones incluidas, y Grad-CAM |
+| `4. Diagnosticos/` | el colapso sin calentamiento y el barrido de resolución |
+
+Se corren en ese orden. Para reproducir el prototipo basta `1. Entrenamiento/`;lo demás sostiene los resultados del artículo.
 
 ## Resultados
 
