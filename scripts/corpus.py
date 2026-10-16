@@ -25,13 +25,14 @@ def buscarEnEntrada(sufijo):
 
 def repoDataset():
     if not EN_KAGGLE:
-        return (ROOT_DIR / loadConfig()["dataset_repo"]).resolve()
+        ruta = (ROOT_DIR / loadConfig()["dataset_repo"]).resolve()
+        if not ruta.exists():
+            raise FileNotFoundError(f"No existe {ruta}, este repositorio depende de ButterflyDataset. Clónalo al lado de este, o apunta 'dataset_repo' de corpus.json a donde lo tengas.")
+        return ruta
     montados = buscarEnEntrada("manifiesto.json")
     if len(montados) != 1:
         adjuntos = sorted(str(d) for d in Path("/kaggle/input").glob("*/*"))
-        raise RuntimeError(f"Se esperaba un dataset con manifiesto.json adjunto a "
-                           f"la sesión; hay {len(montados)}. Bajo /kaggle/input: "
-                           f"{adjuntos[:6]}")
+        raise RuntimeError(f"Se esperaba un dataset con manifiesto.json adjunto a la sesión; hay {len(montados)}. Bajo /kaggle/input: {adjuntos[:6]}")
     return montados[0].parent
 
 
