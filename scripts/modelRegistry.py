@@ -16,6 +16,16 @@ def buildRunId(name):
     return f"{stamp}_{name}"
 
 
+def runDir(runId):
+    return RUNS_DIR / runId
+
+
+def createRunDir(runId):
+    path = runDir(runId)
+    (path / "imgs").mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def commitActual():
     """Commit del que salió el código; sufijo -sucio si hay cambios sin commitear."""
     def corre(*args):
@@ -31,16 +41,6 @@ def commitActual():
     return f"{commit}-sucio" if corre("status", "--porcelain", "-uno").stdout.strip() else commit
 
 
-def runDir(runId):
-    return RUNS_DIR / runId
-
-
-def createRunDir(runId):
-    path = runDir(runId)
-    (path / "imgs").mkdir(parents=True, exist_ok=True)
-    return path
-
-
 def writeJson(path, payload):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as handle:
@@ -53,6 +53,46 @@ def readJson(path, default=None):
         return default
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def loadRunConfig(runId):
+    return readJson(runDir(runId) / "run.json", default={})
+
+
+def loadRunMetrics(runId):
+    return readJson(runDir(runId) / "metrics.json", default={})
+
+
+def rutaModelo(runId):
+    local = runDir(runId) / "model.keras"
+    if local.exists():
+        return local
+    from scripts.corpus import buscarEnEntrada
+
+    for montado in buscarEnEntrada(f"{runId}/model.keras"):
+        return montado
+    return pesos.descargar(runId, local)
+
+
+def modeloInferencia(runId):
+    """El modelo sin las capas de augmentation, que el conversor de TF.js no
+    acepta. No tienen pesos, así que las dos listas coinciden.
+
+    Reconstruye la topología con buildModel y del archivo lee solo los pesos:
+    deserializar la configuración rompe cuando Kaggle guarda con una Keras más
+    nueva que la local.
+    """
+    from scripts.architectures import buildModel
+
+    config = loadRunConfig(runId)
+    arquitectura, clases = config["architecture"], config["num_classes"]
+
+    entrenado = buildModel(arquitectura, clases, aumentar=True)
+    entrenado.load_weights(rutaModelo(runId))
+
+    limpio = buildModel(arquitectura, clases, aumentar=False)
+    limpio.set_weights(entrenado.get_weights())
+    return limpio
 
 
 def entradaDe(runId):
@@ -118,43 +158,3 @@ def findRun(reference):
         ids = ", ".join(m["run_id"] for m in matches)
         raise ValueError(f"'{reference}' es ambiguo, coincide con: {ids}")
     raise ValueError(f"No existe el run '{reference}'")
-
-
-def rutaModelo(runId):
-    local = runDir(runId) / "model.keras"
-    if local.exists():
-        return local
-    from scripts.corpus import buscarEnEntrada
-
-    for montado in buscarEnEntrada(f"{runId}/model.keras"):
-        return montado
-    return pesos.descargar(runId, local)
-
-
-def loadRunMetrics(runId):
-    return readJson(runDir(runId) / "metrics.json", default={})
-
-
-def loadRunConfig(runId):
-    return readJson(runDir(runId) / "run.json", default={})
-
-
-def modeloInferencia(runId):
-    """El modelo sin las capas de augmentation, que el conversor de TF.js no
-    acepta. No tienen pesos, así que las dos listas coinciden.
-
-    Reconstruye la topología con buildModel y del archivo lee solo los pesos:
-    deserializar la configuración rompe cuando Kaggle guarda con una Keras más
-    nueva que la local.
-    """
-    from scripts.architectures import buildModel
-
-    config = loadRunConfig(runId)
-    arquitectura, clases = config["architecture"], config["num_classes"]
-
-    entrenado = buildModel(arquitectura, clases, aumentar=True)
-    entrenado.load_weights(rutaModelo(runId))
-
-    limpio = buildModel(arquitectura, clases, aumentar=False)
-    limpio.set_weights(entrenado.get_weights())
-    return limpio

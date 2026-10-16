@@ -21,39 +21,6 @@ AREA_MIN_RELATIVA = 0.005
 LADO_SALIDA = 448
 
 
-def rutaDetector():
-    local = ROOT_DIR / "outputs" / ARCHIVO
-    if local.exists():
-        return local
-    try:
-        return pesos.descargar(ETIQUETA, local, ARCHIVO)
-    except FileNotFoundError:
-        raise FileNotFoundError("No hay detector horneado publicado") from None
-
-
-def cargarDetector():
-    from ultralytics import YOLOWorld
-
-    return YOLOWorld(str(rutaDetector()))
-
-
-def hornear():
-    """Incrusta los prompts en el checkpoint y lo publica, para no bajar CLIP."""
-    from ultralytics import YOLOWorld
-
-    destino = ROOT_DIR / "outputs" / ARCHIVO
-    destino.parent.mkdir(parents=True, exist_ok=True)
-
-    detector = YOLOWorld("yolov8s-worldv2.pt")
-    detector.set_classes(list(PROMPTS))
-    del detector.model.clip_model
-    detector.save(str(destino))
-
-    print(f"{destino} ({destino.stat().st_size / 2 ** 20:.0f} MB)")
-    pesos.subir(ETIQUETA, destino, ARCHIVO)
-    return destino
-
-
 def mejorCaja(resultado):
     cajas = resultado.boxes
     alto, ancho = resultado.orig_shape
@@ -115,3 +82,36 @@ def conCaja(imagen, caja):
         grosor = max(2, round(min(copia.size) / 150))
         ImageDraw.Draw(copia).rectangle(caja, outline=(255, 90, 0), width=grosor)
     return copia
+
+
+def rutaDetector():
+    local = ROOT_DIR / "outputs" / ARCHIVO
+    if local.exists():
+        return local
+    try:
+        return pesos.descargar(ETIQUETA, local, ARCHIVO)
+    except FileNotFoundError:
+        raise FileNotFoundError("No hay detector horneado publicado") from None
+
+
+def cargarDetector():
+    from ultralytics import YOLOWorld
+
+    return YOLOWorld(str(rutaDetector()))
+
+
+def hornear():
+    """Incrusta los prompts en el checkpoint y lo publica, para no bajar CLIP."""
+    from ultralytics import YOLOWorld
+
+    destino = ROOT_DIR / "outputs" / ARCHIVO
+    destino.parent.mkdir(parents=True, exist_ok=True)
+
+    detector = YOLOWorld("yolov8s-worldv2.pt")
+    detector.set_classes(list(PROMPTS))
+    del detector.model.clip_model
+    detector.save(str(destino))
+
+    print(f"{destino} ({destino.stat().st_size / 2 ** 20:.0f} MB)")
+    pesos.subir(ETIQUETA, destino, ARCHIVO)
+    return destino
