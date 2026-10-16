@@ -9,8 +9,6 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 OUTPUTS_DIR = ROOT_DIR / "outputs"
 RUNS_DIR = OUTPUTS_DIR / "runs"
 REGISTRY_PATH = RUNS_DIR / "registry.json"
-PROMOTED_MODEL_PATH = OUTPUTS_DIR / "model.keras"
-CURRENT_RUN_PATH = OUTPUTS_DIR / "current_run.json"
 
 
 def buildRunId(name):
@@ -160,24 +158,3 @@ def modeloInferencia(runId):
     limpio = buildModel(arquitectura, clases, aumentar=False)
     limpio.set_weights(entrenado.get_weights())
     return limpio
-
-
-def promoteRun(reference):
-    run = findRun(reference)
-    runId = run["run_id"]
-    modeloInferencia(runId).save(PROMOTED_MODEL_PATH)
-    metrics = loadRunMetrics(runId)
-    writeJson(
-        CURRENT_RUN_PATH,
-        {
-            "run_id": runId,
-            "name": run.get("name"),
-            "architecture": run.get("architecture"),
-            "num_classes": run.get("num_classes"),
-            "class_names": metrics.get("class_names", []),
-            "promoted_at": datetime.now(timezone.utc).isoformat(),
-        },
-    )
-    print(f"Run promovido: {runId}")
-    return runId
-
