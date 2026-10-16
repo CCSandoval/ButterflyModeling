@@ -1,6 +1,5 @@
 """Publica en GitHub los artefactos de un run entrenado en Kaggle."""
 
-import os
 import subprocess
 from pathlib import Path
 
