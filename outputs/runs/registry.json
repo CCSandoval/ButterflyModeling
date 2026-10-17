@@ -1,6 +1,27 @@
 {
   "runs": [
     {
+      "run_id": "20261017T034621Z_kd-respuesta-ft-mobilenet-v3-small",
+      "name": "kd-respuesta-ft-mobilenet-v3-small",
+      "dataset": "2026-10-13T16:33:39.530340+00:00",
+      "architecture": "mobilenet_v3_small",
+      "role": "destilado",
+      "teacher_run_id": "20261007T192046Z_efficientnet-b0",
+      "distillation": "respuesta",
+      "finetuning": 0.3,
+      "num_classes": 100,
+      "epochs_ran": 74,
+      "training_minutes": 256.6,
+      "test_accuracy": 0.9068617757563773,
+      "test_macro_f1": 0.9046504997424069,
+      "validate_accuracy": 0.9032767469403868,
+      "validate_macro_f1": 0.9014227442250222,
+      "acelerador": "GPU",
+      "commit": "895e1d0",
+      "notes": "KD de respuesta con la cola del backbone del estudiante descongelada",
+      "created_at": "2026-10-17T03:47:07.376986+00:00"
+    },
+    {
       "run_id": "20261017T032623Z_kd-atencion-mobilenet-v3-small",
       "name": "kd-atencion-mobilenet-v3-small",
       "dataset": "2026-10-07T05:04:51.558690+00:00",
