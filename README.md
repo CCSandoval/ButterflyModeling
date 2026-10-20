@@ -50,8 +50,8 @@ Los notebooks encuentran el corpus por la ruta que declara `corpus.json`, relati
 |---|---|
 | `1. Entrenamiento/` | un notebook por arquitectura, nueve en total, y `Seleccion`, que de la misma tabla saca el estudiante (el mejor dentro del presupuesto de descarga) y el docente (el mejor sin restricción) |
 | `2. Destilacion/` | destilación de respuesta y, sobre ella, transferencia de atención |
-| `3. Analisis/` | comparación final, con las destilaciones incluidas, y Grad-CAM |
-| `4. Diagnosticos/` | el colapso sin calentamiento y el barrido de resolución |
+| `3. Analisis/` | comparación final con las destilaciones incluidas, Grad-CAM y la latencia de la aplicación |
+| `4. Diagnosticos/` | el colapso de dos arquitecturas cuando se descongela sin calentamiento |
 
 Se corren en ese orden. Para reproducir el prototipo basta `1. Entrenamiento/`;lo demás sostiene los resultados del artículo.
 

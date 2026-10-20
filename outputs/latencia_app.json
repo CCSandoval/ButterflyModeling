@@ -1,0 +1,41 @@
+{
+  "run_id": "20261007T124302Z_mobilenet-v3-small",
+  "arquitectura": "mobilenet_v3_small",
+  "imagenes": 40,
+  "etapas_ms": {
+    "decodificar": {
+      "mediana": 3.7,
+      "sd": 2.3,
+      "p90": 7.8
+    },
+    "detectar y recortar": {
+      "mediana": 144.4,
+      "sd": 58.3,
+      "p90": 250.7
+    },
+    "clasificar": {
+      "mediana": 49.8,
+      "sd": 22.6,
+      "p90": 77.6
+    },
+    "Grad-CAM": {
+      "mediana": 178.0,
+      "sd": 75.3,
+      "p90": 349.7
+    },
+    "superponer": {
+      "mediana": 1.0,
+      "sd": 1.1,
+      "p90": 1.7
+    },
+    "TOTAL": {
+      "mediana": 397.1,
+      "sd": 119.9,
+      "p90": 604.1
+    }
+  },
+  "arranque_frio_s": {
+    "detector": 1.57,
+    "modelo": 0.88
+  }
+}
