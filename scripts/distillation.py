@@ -52,13 +52,10 @@ def perdidaAtencion(featuresDocente, featuresEstudiante):
 
 
 class Destilador(tf.keras.Model):
-    """Entrena al estudiante con KD de respuesta. Recibe imágenes crudas (0-255)
-    y aplica el preprocess de cada modelo por dentro, de forma que ambos vean
-    exactamente la misma vista aumentada.
-
-    `val_loss` es la CE del estudiante, no la pérdida de destilación: así el
-    EarlyStopping monitorea lo mismo que en los notebooks 01-05 y los modelos
-    quedan comparables.
+    """KD de respuesta sobre imágenes crudas (0-255), con el preprocess de cada
+    modelo por dentro para que ambos vean la misma vista aumentada. `val_loss`
+    es la CE del estudiante, no la pérdida de destilación, para que
+    EarlyStopping monitoree lo mismo que en los demás entrenamientos.
     """
 
     def __init__(self, docente, estudiante, preprocessDocente, preprocessEstudiante,

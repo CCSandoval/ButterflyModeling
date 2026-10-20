@@ -75,12 +75,9 @@ def rutaModelo(runId):
 
 
 def modeloInferencia(runId):
-    """El modelo sin las capas de augmentation, que el conversor de TF.js no
-    acepta. No tienen pesos, así que las dos listas coinciden.
-
-    Reconstruye la topología con buildModel y del archivo lee solo los pesos:
-    deserializar la configuración rompe cuando Kaggle guarda con una Keras más
-    nueva que la local.
+    """El modelo sin las capas de augmentation. Reconstruye la topología con
+    buildModel y del archivo lee solo los pesos, porque deserializar la
+    configuración rompe cuando Kaggle guarda con una Keras más nueva.
     """
     from scripts.architectures import buildModel
 

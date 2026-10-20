@@ -46,11 +46,9 @@ def computeGradcam(model, img: Image.Image, classIndex: int, preprocessFn) -> np
 
 
 def cajaEnRecorte(fila) -> list:
-    """Caja de la mariposa en coordenadas normalizadas del recorte cuadrado.
-
-    `auditoria.csv` guarda la detección de YOLO-World en el espacio de la
-    imagen original y el recorte como origen + lado, así que hay que trasladar
-    y escalar. Se recorta a [0,1] porque la caja puede salirse del cuadrado.
+    """Caja en coordenadas normalizadas del recorte. `auditoria.csv` la guarda en
+    el espacio de la imagen original, así que hay que trasladar y escalar, y
+    recortar a [0,1] porque puede salirse del cuadrado.
     """
     lado = fila["ladoOriginal"]
     caja = [
