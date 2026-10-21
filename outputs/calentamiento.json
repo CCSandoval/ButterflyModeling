@@ -1,0 +1,57 @@
+{
+  "num_clases": 100,
+  "azar": 0.01,
+  "epocas_calentamiento": 5,
+  "epocas_ajuste": 8,
+  "tasa": 0.0001,
+  "resultados": [
+    {
+      "arquitectura": "mobilenet_v2",
+      "calentamiento": false,
+      "train_acc": 0.00920072291046381,
+      "val_acc": 0.007106197997927666,
+      "val_loss_max": 200.54806518554688,
+      "colapsa": true
+    },
+    {
+      "arquitectura": "mobilenet_v2",
+      "calentamiento": true,
+      "train_acc": 0.7604425549507141,
+      "val_acc": 0.7185155749320984,
+      "val_loss_max": 4.2156291007995605,
+      "colapsa": false
+    },
+    {
+      "arquitectura": "resnet50_v2",
+      "calentamiento": false,
+      "train_acc": 0.03177918121218681,
+      "val_acc": 0.04026845470070839,
+      "val_loss_max": 8.844273567199707,
+      "colapsa": true
+    },
+    {
+      "arquitectura": "resnet50_v2",
+      "calentamiento": true,
+      "train_acc": 0.8722623586654663,
+      "val_acc": 0.8491907119750977,
+      "val_loss_max": 3.884171962738037,
+      "colapsa": false
+    },
+    {
+      "arquitectura": "mobilenet_v3_small",
+      "calentamiento": false,
+      "train_acc": 0.6166741847991943,
+      "val_acc": 0.7418081164360046,
+      "val_loss_max": 3.4768173694610596,
+      "colapsa": false
+    },
+    {
+      "arquitectura": "mobilenet_v3_small",
+      "calentamiento": true,
+      "train_acc": 0.7208173274993896,
+      "val_acc": 0.8132649064064026,
+      "val_loss_max": 3.837409496307373,
+      "colapsa": false
+    }
+  ]
+}
