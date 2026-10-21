@@ -1,0 +1,153 @@
+{
+  "perfil": [
+    {
+      "rol": "docente",
+      "T": 1.0,
+      "entropia_norm": 0.0275,
+      "masa_top1": 0.9635999798774719,
+      "masa_fuera_top1": 0.036400001496076584,
+      "masa_top2_5": 0.02930000051856041,
+      "clases_efectivas": 1.3513
+    },
+    {
+      "rol": "docente",
+      "T": 2.0,
+      "entropia_norm": 0.1899,
+      "masa_top1": 0.8424999713897705,
+      "masa_fuera_top1": 0.1574999988079071,
+      "masa_top2_5": 0.06449999660253525,
+      "clases_efectivas": 4.2536
+    },
+    {
+      "rol": "docente",
+      "T": 4.0,
+      "entropia_norm": 0.8092,
+      "masa_top1": 0.28200000524520874,
+      "masa_fuera_top1": 0.7179999947547913,
+      "masa_top2_5": 0.10180000215768814,
+      "clases_efectivas": 43.801
+    },
+    {
+      "rol": "docente",
+      "T": 6.0,
+      "entropia_norm": 0.9474,
+      "masa_top1": 0.10819999873638153,
+      "masa_fuera_top1": 0.8917999863624573,
+      "masa_top2_5": 0.08489999920129776,
+      "clases_efectivas": 78.7382
+    },
+    {
+      "rol": "docente",
+      "T": 8.0,
+      "entropia_norm": 0.9772,
+      "masa_top1": 0.0617000013589859,
+      "masa_fuera_top1": 0.9383000135421753,
+      "masa_top2_5": 0.07259999960660934,
+      "clases_efectivas": 90.0751
+    },
+    {
+      "rol": "estudiante",
+      "T": 1.0,
+      "entropia_norm": 0.054,
+      "masa_top1": 0.9279000163078308,
+      "masa_fuera_top1": 0.07209999859333038,
+      "masa_top2_5": 0.05689999833703041,
+      "clases_efectivas": 1.7288
+    },
+    {
+      "rol": "estudiante",
+      "T": 2.0,
+      "entropia_norm": 0.2499,
+      "masa_top1": 0.7709000110626221,
+      "masa_fuera_top1": 0.22910000383853912,
+      "masa_top2_5": 0.1014999970793724,
+      "clases_efectivas": 6.42
+    },
+    {
+      "rol": "estudiante",
+      "T": 4.0,
+      "entropia_norm": 0.8132,
+      "masa_top1": 0.2612000107765198,
+      "masa_fuera_top1": 0.7387999892234802,
+      "masa_top2_5": 0.12030000239610672,
+      "clases_efectivas": 45.7505
+    },
+    {
+      "rol": "estudiante",
+      "T": 6.0,
+      "entropia_norm": 0.9455,
+      "masa_top1": 0.10279999673366547,
+      "masa_fuera_top1": 0.8971999883651733,
+      "masa_top2_5": 0.09470000118017197,
+      "clases_efectivas": 78.2271
+    },
+    {
+      "rol": "estudiante",
+      "T": 8.0,
+      "entropia_norm": 0.9758,
+      "masa_top1": 0.05920000001788139,
+      "masa_fuera_top1": 0.9408000111579895,
+      "masa_top2_5": 0.07890000194311142,
+      "clases_efectivas": 89.5104
+    }
+  ],
+  "congenerica": [
+    {
+      "T": 1.0,
+      "masa_congenerica": 0.23520000278949738,
+      "azar": 0.0123,
+      "veces_el_azar": 19.1
+    },
+    {
+      "T": 2.0,
+      "masa_congenerica": 0.11749999970197678,
+      "azar": 0.0123,
+      "veces_el_azar": 9.5
+    },
+    {
+      "T": 4.0,
+      "masa_congenerica": 0.042500000447034836,
+      "azar": 0.0123,
+      "veces_el_azar": 3.4
+    },
+    {
+      "T": 6.0,
+      "masa_congenerica": 0.027799999341368675,
+      "azar": 0.0123,
+      "veces_el_azar": 2.2
+    },
+    {
+      "T": 8.0,
+      "masa_congenerica": 0.02239999920129776,
+      "azar": 0.0123,
+      "veces_el_azar": 1.8
+    }
+  ],
+  "distancias": [
+    {
+      "T": 1.0,
+      "KL(docente||estudiante)": 0.2732999920845032,
+      "KL(docente||destilado)": 0.2615000009536743
+    },
+    {
+      "T": 2.0,
+      "KL(docente||estudiante)": 0.2207999974489212,
+      "KL(docente||destilado)": 0.164900004863739
+    },
+    {
+      "T": 4.0,
+      "KL(docente||estudiante)": 0.14869999885559082,
+      "KL(docente||destilado)": 0.0754999965429306
+    },
+    {
+      "T": 6.0,
+      "KL(docente||estudiante)": 0.07169999927282333,
+      "KL(docente||destilado)": 0.03220000118017197
+    },
+    {
+      "T": 8.0,
+      "KL(docente||estudiante)": 0.040699999779462814,
+      "KL(docente||destilado)": 0.017500000074505806
+    }
+  ]
+}
