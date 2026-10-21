@@ -32,7 +32,7 @@ Los dos comandos de arriba. Baja los pesos ya entrenados de los releases de este
 
 ### 2 · Verificar los resultados
 
-`notebooks/1. Entrenamiento/Seleccion` y `notebooks/3. Analisis/`, en local, reproducen la tabla de las nueve arquitecturas con sus latencias, la elección del estudiante y del docente, la comparación final y los mapas de atención. Los pesos se bajan solos; hace falta el corpus en disco, que se reconstruye con los notebooks de [ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset) y es la parte lenta.
+`notebooks/1. Entrenamiento/Seleccion` y `notebooks/3. Analisis/` reproducen la tabla de las nueve arquitecturas con sus latencias, la elección del estudiante y del docente, la comparación final y los mapas de atención. Los pesos se bajan solos; hace falta el corpus en disco, que se baja de Zenodo ([10.5281/zenodo.23502754](https://doi.org/10.5281/zenodo.23502754), 1.5 GB) o se reconstruye con los notebooks de [ButterflyDataset](https://github.com/CCSandoval/ButterflyDataset).
 
 ### 3 · Reentrenar
 
