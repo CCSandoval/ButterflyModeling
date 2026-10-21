@@ -1,0 +1,42 @@
+{
+  "run_id": "20261021T153951Z_kd-respuesta-t2-a70-mobilenet-v3-small",
+  "name": "kd-respuesta-t2-a70-mobilenet-v3-small",
+  "dataset": "2026-10-07T05:04:51.558690+00:00",
+  "architecture": "mobilenet_v3_small",
+  "role": "destilado",
+  "notes": "KD de respuesta con la cola del backbone del estudiante descongelada",
+  "num_classes": 100,
+  "distillation": {
+    "tipo": "respuesta",
+    "teacher_run_id": "20261007T192046Z_efficientnet-b0",
+    "teacher_architecture": "efficientnet_b0",
+    "temperatura": 2.0,
+    "finetuning": 0.3,
+    "alfa": 0.7
+  },
+  "hyperparameters": {
+    "img_size": [
+      448,
+      448
+    ],
+    "batch_size": 32,
+    "epochs_budget": 100,
+    "epochs_warmup": 5,
+    "epochs_ran": 67,
+    "learning_rate": 0.0001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "mobilenet_v3_small/imagenet"
+  },
+  "environment": {
+    "commit": "04582d5",
+    "python": "3.13.15",
+    "tensorflow": "2.20.0",
+    "platform": "Linux-6.18.48+-x86_64-with-glibc2.39",
+    "acelerador": "GPU"
+  },
+  "started_at": "2026-10-21T15:40:11.412675+00:00",
+  "finished_at": "2026-10-21T19:36:18.869323+00:00",
+  "training_minutes": 236.1
+}
