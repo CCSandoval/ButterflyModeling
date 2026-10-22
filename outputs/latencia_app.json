@@ -1,41 +1,41 @@
 {
-  "run_id": "20261007T124302Z_mobilenet-v3-small",
+  "run_id": "20261021T203700Z_kd-respuesta-t2-a30-mobilenet-v3-small",
   "arquitectura": "mobilenet_v3_small",
   "imagenes": 40,
   "etapas_ms": {
-    "decodificar": {
-      "mediana": 3.7,
-      "sd": 2.3,
-      "p90": 7.8
+    "decode": {
+      "mediana": 3.6,
+      "sd": 12.6,
+      "p90": 7.6
     },
-    "detectar y recortar": {
-      "mediana": 144.4,
-      "sd": 58.3,
-      "p90": 250.7
+    "detect and crop": {
+      "mediana": 143.9,
+      "sd": 35.5,
+      "p90": 183.4
     },
-    "clasificar": {
-      "mediana": 49.8,
-      "sd": 22.6,
-      "p90": 77.6
+    "classify": {
+      "mediana": 50.7,
+      "sd": 12.3,
+      "p90": 58.6
     },
     "Grad-CAM": {
-      "mediana": 178.0,
-      "sd": 75.3,
-      "p90": 349.7
+      "mediana": 175.8,
+      "sd": 42.2,
+      "p90": 222.8
     },
-    "superponer": {
-      "mediana": 1.0,
-      "sd": 1.1,
-      "p90": 1.7
+    "overlay": {
+      "mediana": 1.3,
+      "sd": 1.4,
+      "p90": 2.3
     },
     "TOTAL": {
-      "mediana": 397.1,
-      "sd": 119.9,
-      "p90": 604.1
+      "mediana": 384.2,
+      "sd": 68.6,
+      "p90": 513.7
     }
   },
   "arranque_frio_s": {
-    "detector": 1.57,
-    "modelo": 0.88
+    "detector": 1.47,
+    "modelo": 0.67
   }
 }

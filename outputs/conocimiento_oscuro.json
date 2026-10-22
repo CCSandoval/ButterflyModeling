@@ -126,28 +126,28 @@
   "distancias": [
     {
       "T": 1.0,
-      "KL(docente||estudiante)": 0.2732999920845032,
-      "KL(docente||destilado)": 0.2615000009536743
+      "KL(teacher||student)": 0.2732999920845032,
+      "KL(teacher||distilled)": 0.3174999952316284
     },
     {
       "T": 2.0,
-      "KL(docente||estudiante)": 0.2207999974489212,
-      "KL(docente||destilado)": 0.164900004863739
+      "KL(teacher||student)": 0.2207999974489212,
+      "KL(teacher||distilled)": 0.27459999918937683
     },
     {
       "T": 4.0,
-      "KL(docente||estudiante)": 0.14869999885559082,
-      "KL(docente||destilado)": 0.0754999965429306
+      "KL(teacher||student)": 0.14869999885559082,
+      "KL(teacher||distilled)": 0.2784000039100647
     },
     {
       "T": 6.0,
-      "KL(docente||estudiante)": 0.07169999927282333,
-      "KL(docente||destilado)": 0.03220000118017197
+      "KL(teacher||student)": 0.07169999927282333,
+      "KL(teacher||distilled)": 0.11860000342130661
     },
     {
       "T": 8.0,
-      "KL(docente||estudiante)": 0.040699999779462814,
-      "KL(docente||destilado)": 0.017500000074505806
+      "KL(teacher||student)": 0.040699999779462814,
+      "KL(teacher||distilled)": 0.061500001698732376
     }
   ]
 }

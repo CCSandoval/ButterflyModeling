@@ -8,7 +8,7 @@
   "validate_macro_f1": 0.9033390037953635,
   "top3_accuracy": 0.9626260628831322,
   "pesos_MB": 5.7,
-  "latencia_ms": 58.4,
-  "latencia_sd_ms": 15.7,
+  "latencia_ms": 67.7,
+  "latencia_sd_ms": 3.9,
   "presupuesto_MB": 8.0
 }

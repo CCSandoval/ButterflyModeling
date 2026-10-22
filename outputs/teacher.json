@@ -5,7 +5,7 @@
   "test_accuracy": 0.9446312042713071,
   "test_macro_f1": 0.9431336339472352,
   "validate_macro_f1": 0.9424097625167122,
-  "latencia_ms": 167.1,
-  "latencia_sd_ms": 9.6,
+  "latencia_ms": 192.2,
+  "latencia_sd_ms": 6.2,
   "parametros_M": 4.89
 }
