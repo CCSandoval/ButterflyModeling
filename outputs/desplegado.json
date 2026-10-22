@@ -1,0 +1,14 @@
+{
+  "run_id": "20261021T203700Z_kd-respuesta-t2-a30-mobilenet-v3-small",
+  "architecture": "mobilenet_v3_small",
+  "dataset": "2026-10-07T05:04:51.558690+00:00",
+  "destilacion": "respuesta",
+  "temperatura": 2.0,
+  "alfa": 0.3,
+  "test_accuracy": 0.9125964010282777,
+  "test_macro_f1": 0.9106953531705705,
+  "validate_macro_f1": 0.905693705068503,
+  "pesos_MB": 5.7,
+  "latencia_ms": 59.3,
+  "presupuesto_MB": 8.0
+}

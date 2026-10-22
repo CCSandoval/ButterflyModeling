@@ -8,7 +8,8 @@ from scripts import modelRegistry as registro
 GALERIA = ("morpho_helenor", "siproeta_stelenes", "heliconius_erato",
            "danaus_plexippus", "heraclides_thoas", "hamadryas_feronia")
 
-eleccion = registro.readJson(registro.OUTPUTS_DIR / "student.json")
+eleccion = (registro.readJson(registro.OUTPUTS_DIR / "desplegado.json")
+            or registro.readJson(registro.OUTPUTS_DIR / "student.json"))
 modelos, predeterminado = comun.catalogoModelos()
 manifiesto = comun.manifiestoCorpus()
 fichas = comun.cargarFichas()

@@ -10,7 +10,7 @@ AYUDA_CREDENCIAL = "!f() { echo username=x-access-token; echo password=$GITHUB_T
 
 PUBLICABLES = ("run.json", "metrics.json", "history.json", "imgs")
 
-SUELTOS = ("outputs/student.json", "outputs/teacher.json")
+SUELTOS = ("outputs/student.json", "outputs/teacher.json", "outputs/desplegado.json")
 
 
 def git(*args):

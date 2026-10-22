@@ -18,7 +18,8 @@ TOP = 5
 @st.cache_data
 def catalogoModelos():
     """Los runs del mismo corpus que el modelo del sitio, mejor primero."""
-    sitio = registro.readJson(registro.OUTPUTS_DIR / "student.json")
+    sitio = (registro.readJson(registro.OUTPUTS_DIR / "desplegado.json")
+             or registro.readJson(registro.OUTPUTS_DIR / "student.json"))
     runs = [r for r in registro.listRuns() if r["dataset"] == sitio["dataset"]]
     runs.sort(key=lambda r: -r["test_accuracy"])
     return {r["run_id"]: r for r in runs}, sitio["run_id"]
