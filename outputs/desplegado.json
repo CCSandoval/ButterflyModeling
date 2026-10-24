@@ -9,6 +9,6 @@
   "test_macro_f1": 0.9106953531705705,
   "validate_macro_f1": 0.905693705068503,
   "pesos_MB": 5.7,
-  "latencia_ms": 60.6,
+  "latencia_ms": 61.3,
   "presupuesto_MB": 8.0
 }

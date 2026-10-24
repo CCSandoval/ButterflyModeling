@@ -14,6 +14,7 @@ modelos, predeterminado = comun.catalogoModelos()
 manifiesto = comun.manifiestoCorpus()
 fichas = comun.cargarFichas()
 sitio, mejor = modelos[predeterminado], modelos[next(iter(modelos))]
+arquitecturas = len({r["architecture"] for r in modelos.values()})
 # el mismo modelo del sitio pero sin destilar, para medir qué aportó destilar
 sinDestilar = next((r for r in modelos.values()
                     if r["architecture"] == eleccion["architecture"]
@@ -52,18 +53,21 @@ izquierda.write(
     f"**{comun.etiquetaModelo(mejor, conAcierto=False)}**, acierta el "
     f"{mejor['test_accuracy']:.1%}; el que sirve este sitio, "
     f"**{comun.etiquetaModelo(sitio, conAcierto=False)}**, acierta el "
-    f"{sitio['test_accuracy']:.1%} pesando {eleccion['pesos_MB']} MB, la única "
-    f"arquitectura bajo el presupuesto de {eleccion['presupuesto_MB']:.0f} MB. Son "
+    f"{sitio['test_accuracy']:.1%} pesando {eleccion['pesos_MB']} MB. De las "
+    f"{arquitecturas} arquitecturas comparadas es la única que cabe en el presupuesto "
+    f"de {eleccion['presupuesto_MB']:.0f} MB; los demás modelos que también caben son "
+    f"variantes suyas. La diferencia son "
     f"{100 * (mejor['test_accuracy'] - sitio['test_accuracy']):.1f} puntos."
 )
+
 if sinDestilar and sitio.get("distillation"):
     izquierda.write(
-        f"El modelo del sitio está destilado, y eso aportó poco: la misma arquitectura "
-        f"entrenada de la forma corriente acierta el {sinDestilar['test_accuracy']:.1%}, "
-        f"frente al {sitio['test_accuracy']:.1%} de la destilada. Con los "
-        f"hiperparámetros habituales no aportaba nada; la diferencia apareció al medir "
-        f"qué contienen de verdad las etiquetas blandas del modelo grande y corregir la "
-        f"temperatura. Sigue siendo una ventaja pequeña, dentro del ruido de la medición."
+        f"El modelo por defecto del sitio está destilado. La misma arquitectura entrenada"
+        f"de la forma corriente acierta el {sinDestilar['test_accuracy']:.1%}, "
+        f"frente al {sitio['test_accuracy']:.1%} de la destilada. Se experimentó con la "
+        f"temperatura, el alfa y el beta (los parámetros que gradúan cuánto imita el "
+        f"modelo pequeño al grande) y la ganancia nunca pasó de ahí. El selector de la izquierda "
+        f"deja comparar las 7 versiones entrenadas de esta arquitectura."
     )
 # una fila por run con etiqueta única: si dos comparten nombre, el gráfico las suma
 derecha.bar_chart(
