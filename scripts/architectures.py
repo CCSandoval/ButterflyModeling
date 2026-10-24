@@ -23,6 +23,19 @@ from tensorflow.keras.applications.nasnet import preprocess_input as nasnetPrepr
 from tensorflow.keras.applications.resnet_v2 import preprocess_input as resnetPreprocess
 
 
+# nombre interno -> como se escribe en el artículo y en la interfaz
+NOMBRES = {
+    "densenet121": "DenseNet121",
+    "efficientnet_b0": "EfficientNetB0",
+    "efficientnet_v2_b0": "EfficientNetV2B0",
+    "efficientnet_v2_s": "EfficientNetV2S",
+    "inception_v3": "InceptionV3",
+    "mobilenet_v2": "MobileNetV2",
+    "mobilenet_v3_small": "MobileNetV3Small",
+    "nasnet_mobile": "NASNetMobile",
+    "resnet50_v2": "ResNet50V2",
+}
+
 # nombre -> (clase base, preprocess_input)
 ARCHITECTURES = {
     "efficientnet_v2_s": (EfficientNetV2S, efficientnetV2Preprocess),

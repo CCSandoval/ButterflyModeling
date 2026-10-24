@@ -107,6 +107,8 @@ def entradaDe(runId):
         "role": config.get("role"),
         "teacher_run_id": destilacion.get("teacher_run_id"),
         "distillation": destilacion.get("tipo"),
+        "temperatura": destilacion.get("temperatura"),
+        "alfa": destilacion.get("alfa"),
         "finetuning": hiper.get("finetuning", destilacion.get("finetuning")),
         "num_classes": config.get("num_classes"),
         "epochs_ran": hiper.get("epochs_ran"),

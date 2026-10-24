@@ -14,7 +14,10 @@ modelos, predeterminado = comun.catalogoModelos()
 manifiesto = comun.manifiestoCorpus()
 fichas = comun.cargarFichas()
 sitio, mejor = modelos[predeterminado], modelos[next(iter(modelos))]
-destilado = next((r for r in modelos.values() if r["role"] == "destilado"), None)
+# el mismo modelo del sitio pero sin destilar, para medir qué aportó destilar
+sinDestilar = next((r for r in modelos.values()
+                    if r["architecture"] == eleccion["architecture"]
+                    and not r.get("distillation")), None)
 
 st.title("🦋 Mariposas del Tolima")
 st.subheader("Reconoce 100 especies a partir de una fotografía", divider="green")
@@ -45,25 +48,28 @@ izquierda.write(
     f"pequeño suele costar precisión. El proyecto mide cuánto cuesta, y si la destilación "
     f"de conocimiento —entrenar al modelo chico imitando a uno grande— cierra esa "
     f"distancia.\n\n"
-    f"La distancia existe pero es angosta. El mejor modelo, **{mejor['architecture']}**, "
-    f"acierta el {mejor['test_accuracy']:.1%}; el que sirve este sitio, "
-    f"**{sitio['architecture']}**, acierta el {sitio['test_accuracy']:.1%} pesando "
-    f"{eleccion['pesos_MB']} MB, el único bajo el presupuesto de "
-    f"{eleccion['presupuesto_MB']:.0f} MB. Son "
+    f"La distancia existe pero es angosta. El mejor modelo, "
+    f"**{comun.etiquetaModelo(mejor, conAcierto=False)}**, acierta el "
+    f"{mejor['test_accuracy']:.1%}; el que sirve este sitio, "
+    f"**{comun.etiquetaModelo(sitio, conAcierto=False)}**, acierta el "
+    f"{sitio['test_accuracy']:.1%} pesando {eleccion['pesos_MB']} MB, la única "
+    f"arquitectura bajo el presupuesto de {eleccion['presupuesto_MB']:.0f} MB. Son "
     f"{100 * (mejor['test_accuracy'] - sitio['test_accuracy']):.1f} puntos."
 )
-if destilado:
+if sinDestilar and sitio.get("distillation"):
     izquierda.write(
-        f"Destilar no cerró esa brecha: la versión destilada del modelo pequeño quedó en "
-        f"{destilado['test_accuracy']:.1%}, por debajo del {sitio['test_accuracy']:.1%} "
-        f"del mismo modelo entrenado de la forma corriente. Un resultado negativo, y "
-        f"parte de lo que el trabajo reporta."
+        f"El modelo del sitio está destilado, y eso aportó poco: la misma arquitectura "
+        f"entrenada de la forma corriente acierta el {sinDestilar['test_accuracy']:.1%}, "
+        f"frente al {sitio['test_accuracy']:.1%} de la destilada. Con los "
+        f"hiperparámetros habituales no aportaba nada; la diferencia apareció al medir "
+        f"qué contienen de verdad las etiquetas blandas del modelo grande y corregir la "
+        f"temperatura. Sigue siendo una ventaja pequeña, dentro del ruido de la medición."
     )
+# una fila por run con etiqueta única: si dos comparten nombre, el gráfico las suma
 derecha.bar_chart(
-    [{"modelo": f"{r['architecture']}"
-               f"{' destilado' if r['role'] == 'destilado' else ''}",
+    [{"modelo": comun.etiquetaModelo(r, conAcierto=False),
       "acierto": r["test_accuracy"]} for r in modelos.values()],
-    x="modelo", y="acierto", horizontal=True, height=320,
+    x="modelo", y="acierto", horizontal=True, height=430,
     x_label="acierto en prueba", y_label="",
 )
 

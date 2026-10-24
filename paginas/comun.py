@@ -10,7 +10,7 @@ from scripts import fichas as catalogo
 from scripts import gradcam
 from scripts import modelRegistry as registro
 from scripts import recorte
-from scripts.architectures import CABEZA_POOL, preprocessFn
+from scripts.architectures import CABEZA_POOL, NOMBRES, preprocessFn
 
 TOP = 5
 
@@ -23,6 +23,17 @@ def catalogoModelos():
     runs = [r for r in registro.listRuns() if r["dataset"] == sitio["dataset"]]
     runs.sort(key=lambda r: -r["test_accuracy"])
     return {r["run_id"]: r for r in runs}, sitio["run_id"]
+
+
+def etiquetaModelo(run, conAcierto=True):
+    """Nombre legible y único: varios destilados comparten arquitectura y solo
+    los distinguen la temperatura y el alfa con que se entrenaron."""
+    nombre = NOMBRES.get(run["architecture"], run["architecture"])
+    if run.get("distillation"):
+        variante = {"respuesta": "respuesta", "atencion": "atención"}.get(
+            run["distillation"], run["distillation"])
+        nombre += f" · KD {variante} T={run['temperatura']:g} α={run['alfa']:g}"
+    return f"{nombre} · {run['test_accuracy']:.1%}" if conAcierto else nombre
 
 
 @st.cache_resource
@@ -96,12 +107,8 @@ def selectorModelo():
     todas las páginas, para que el widget no pierda su valor al navegar."""
     modelos, predeterminado = catalogoModelos()
 
-    def etiqueta(runId):
-        run = modelos[runId]
-        destilado = " destilado" if run["role"] == "destilado" else ""
-        return f"{run['architecture']}{destilado} · {run['test_accuracy']:.1%}"
-
-    runId = st.sidebar.selectbox("Modelo", list(modelos), format_func=etiqueta,
+    runId = st.sidebar.selectbox("Modelo", list(modelos),
+                                 format_func=lambda r: etiquetaModelo(modelos[r]),
                                  index=list(modelos).index(predeterminado), key="modelo")
     elegido = modelos[runId]
     st.sidebar.caption(f"Reconoce {elegido['num_classes']} especies y acierta el "
