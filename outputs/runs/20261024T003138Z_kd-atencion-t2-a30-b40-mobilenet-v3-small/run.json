@@ -1,0 +1,43 @@
+{
+  "run_id": "20261024T003138Z_kd-atencion-t2-a30-b40-mobilenet-v3-small",
+  "name": "kd-atencion-t2-a30-b40-mobilenet-v3-small",
+  "dataset": "2026-10-07T05:04:51.558690+00:00",
+  "architecture": "mobilenet_v3_small",
+  "role": "destilado",
+  "notes": "KD de respuesta + attention transfer, backbone descongelado",
+  "num_classes": 100,
+  "distillation": {
+    "tipo": "atencion",
+    "teacher_run_id": "20261007T192046Z_efficientnet-b0",
+    "teacher_architecture": "efficientnet_b0",
+    "temperatura": 2.0,
+    "beta_atencion": 40.0,
+    "finetuning": 0.3,
+    "alfa": 0.3
+  },
+  "hyperparameters": {
+    "img_size": [
+      448,
+      448
+    ],
+    "batch_size": 32,
+    "epochs_budget": 100,
+    "epochs_warmup": 5,
+    "epochs_ran": 67,
+    "learning_rate": 0.0001,
+    "early_stopping_patience": 8,
+    "class_weights": "balanced",
+    "seed": 42,
+    "backbone": "mobilenet_v3_small/imagenet"
+  },
+  "environment": {
+    "commit": "07485ef",
+    "python": "3.13.15",
+    "tensorflow": "2.20.0",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "acelerador": "GPU"
+  },
+  "started_at": "2026-10-24T00:31:57.474376+00:00",
+  "finished_at": "2026-10-24T04:20:45.054153+00:00",
+  "training_minutes": 228.8
+}
